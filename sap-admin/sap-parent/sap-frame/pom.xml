@@ -9,15 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>sap-data</artifactId>
-    <dependencies>
-        <dependency>
-            <groupId>com.eastx</groupId>
-            <artifactId>sap-frame</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
+    <artifactId>sap-frame</artifactId>
 
     <properties>
         <maven.compiler.source>16</maven.compiler.source>

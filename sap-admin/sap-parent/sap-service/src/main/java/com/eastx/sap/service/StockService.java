@@ -1,11 +1,11 @@
 package com.eastx.sap.service;
 
 import com.eastx.sap.data.pojo.Bar;
-import com.eastx.sap.trader.core.SingleCerebra;
-import com.eastx.sap.trader.core.data.DataFactory;
-import com.eastx.sap.trader.core.data.MockExchangeFactory;
-import com.eastx.sap.trader.core.data.SortedCacheDataFactory;
-import com.eastx.sap.trader.strategy.OhlcStrategy;
+import com.eastx.sap.back.core.SingleCerebra;
+import com.eastx.sap.back.core.data.DataFactory;
+import com.eastx.sap.back.core.data.MockExchangeFactory;
+import com.eastx.sap.back.core.data.SortedCacheDataFactory;
+import com.eastx.sap.back.strategy.OhlcStrategy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;

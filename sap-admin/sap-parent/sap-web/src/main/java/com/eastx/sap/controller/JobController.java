@@ -3,6 +3,7 @@ package com.eastx.sap.controller;
 import com.eastx.sap.data.dto.JobDTO;
 import com.eastx.sap.data.request.JobRequest;
 import com.eastx.sap.data.request.JobResponse;
+import com.eastx.sap.error.ErrorEnum;
 import com.eastx.sap.error.ExceptionFactory;
 import com.eastx.sap.service.JobService;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +29,18 @@ public class JobController {
     @Autowired
     JobService jobService;
 
-    @RequestMapping(value="/{id}/order", method= RequestMethod.GET)
-    public void order(@PathVariable(name="id") String jobId, @RequestParam String bizDate, @RequestParam Long batchNo) throws Exception {
-        jobService.order(jobId, bizDate, batchNo);
+    @Autowired
+    ExceptionFactory exceptionFactory;
+
+//    @RequestMapping(value="/{id}/order", method= RequestMethod.GET)
+//    public void order(@PathVariable(name="id") String jobId, @RequestParam String bizDate, @RequestParam Long batchNo) throws Exception {
+//        jobService.order(jobId, bizDate, batchNo);
+//    }
+
+    @GetMapping
+    public void test(){
+        log.info("Get job");
+        //throw exceptionFactory.newException(ErrorEnum.FAIL, "test exception");
     }
 
     @PutMapping(value="/{id}")

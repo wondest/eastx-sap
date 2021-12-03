@@ -5,12 +5,12 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>sap-web</module>
-		<module>sap-data</module>
-		<module>sap-interface</module>
-		<module>sap-batch</module>
 		<module>sap-service</module>
-        <module>sap-core-trader</module>
-        <module>sap-infrastructure</module>
+		<module>sap-data</module>
+		<module>sap-frame</module>
+		<module>sap-core-batch</module>
+        <module>sap-core-back</module>
+        <module>sap-core-score</module>
     </modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -27,6 +27,10 @@
 		<java.version>16</java.version>
 	</properties>
 	<dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-batch</artifactId>
