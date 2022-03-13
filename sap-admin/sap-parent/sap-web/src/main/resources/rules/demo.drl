@@ -1,0 +1,12 @@
+package com.ccb.abccf.demo;
+
+import com.eastx.sap.rule.DroolsMessage;
+
+
+rule "HelloWorld"
+  when
+    $m : DroolsMessage( status == DroolsMessage.HELLO, message : message )
+  then
+    System.out.println( message );
+    $m.setResult("ni hao");
+end

@@ -2,7 +2,7 @@ package com.eastx.sap.batch.tdxJob;
 
 import com.eastx.sap.data.entity.JobBase;
 import com.eastx.sap.data.entity.JobInstance;
-import com.eastx.sap.data.entity.Stock;
+import com.eastx.sap.data.model.Stock;
 import com.eastx.sap.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -40,7 +40,7 @@ public class OrderItemProcessor implements ItemProcessor<Stock, JobInstance> {
 	@Override
 	public JobInstance process(final Stock stock) {
 		//get bizKey, like sh000001
-		String bizKey = stock.getExchange().shortName().concat(stock.getCode());
+		String bizKey = stock.getExchange().toString().concat(stock.getCode());
 
 		//new a jobInstance
 		JobInstance instance = new JobInstance();

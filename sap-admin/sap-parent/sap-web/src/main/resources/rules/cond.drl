@@ -1,0 +1,21 @@
+package com.ccb.abccf.cond;
+
+import com.eastx.sap.rule.DroolsMessage;
+
+rule "TestCond1"
+  agenda-group "cond"
+  when
+    $m : DroolsMessage( loanbal > loanamt, $message : message )
+  then
+    System.out.println("then rules");
+    $m.setResult($message + ": loanbal > loanamt");
+end
+
+rule "ElseCond1"
+  agenda-group "cond"
+  when
+    $m : DroolsMessage( loanbal <= loanamt, $message : message )
+  then
+    System.out.println("else rules");
+    $m.setResult($message + ": loanbal <= loanamt");
+end

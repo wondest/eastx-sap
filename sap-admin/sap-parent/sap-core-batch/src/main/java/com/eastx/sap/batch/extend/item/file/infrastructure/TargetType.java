@@ -79,7 +79,7 @@ public class TargetType<T> {
                 this.ranges[i] = Range.valueOf(next, 8);
                 next += 8;
             } else {
-                throw new TypeNotSupportedException(type.getTypeName());
+                //throw new TypeNotSupportedException(type.getTypeName());
             }
 
             //increase

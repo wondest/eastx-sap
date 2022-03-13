@@ -1,7 +1,7 @@
 package com.eastx.sap.batch.tdxJob;
 
 import com.eastx.sap.data.entity.JobInstance;
-import com.eastx.sap.data.entity.Stock;
+import com.eastx.sap.data.model.Stock;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
@@ -11,12 +11,10 @@ import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
 import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 
 /**
  * @ClassName OrderJobFactory

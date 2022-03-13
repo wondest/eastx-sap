@@ -2,6 +2,7 @@ package com.eastx.sap.config;
 
 import com.eastx.sap.batch.batchTdx.BatchTdxConfiguration;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.jdbc.support.JdbcTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 
 import javax.sql.DataSource;
@@ -70,6 +72,14 @@ public class BatchJobConfiguration extends DefaultBatchConfigurer {
     @Primary
     public JpaTransactionManager jpaTransactionManager() {
         final JpaTransactionManager tm = new JpaTransactionManager();
+        tm.setDataSource(dataSource);
+        return tm;
+    }
+
+    @Bean
+    @Primary
+    public JdbcTransactionManager jdbcTransactionManager() {
+        final JdbcTransactionManager tm = new JdbcTransactionManager();
         tm.setDataSource(dataSource);
         return tm;
     }

@@ -1,10 +1,16 @@
 package com.eastx.sap.controller;
 
+import com.eastx.sap.batch.mybatisJob.MybatisJobFactory;
 import com.eastx.sap.batch.tdxJob.OrderJobFactory;
 import com.eastx.sap.batch.batchTdx.TdxJobFactory;
+import com.eastx.sap.data.mapper.StockMapper;
+import com.eastx.sap.data.model.Stock;
 import com.eastx.sap.error.ErrorEnum;
 import com.eastx.sap.error.ExceptionFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +44,15 @@ public class BatchController {
     @Autowired
     TdxJobFactory jobFactory;
 
+    @Autowired
+    StockMapper stockMapper;
+
+    @Autowired
+    MybatisJobFactory mybatisJobFactory;
+
+    @Autowired
+    Job mybatisJob;
+
     /**
      * 群发消息内容
      * @return
@@ -47,6 +62,30 @@ public class BatchController {
         try {
             SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
             jobLauncher.run(jobFactory.createJob(code), jobFactory.createParameters(code, dateFormatter.parse(bizDate)));
+            
+        } catch(Exception e) {
+            log.error("jobLauncher.run failed", e);
+            throw exceptionFactory.newException(ErrorEnum.FAIL, e);
+        }
+    }
+
+    /**
+     * 群发消息内容
+     * @return
+     */
+    @RequestMapping(value="/stock", method= RequestMethod.GET)
+    public void getStock(@RequestParam(required=false) Long id) {
+        try {
+            JobExecution jobExecution = jobLauncher.run(mybatisJob, mybatisJobFactory.createParameters(1, id + "aaa.dat"));
+
+
+            if(jobExecution.getStatus() == BatchStatus.COMPLETED) {
+                log.info("!!! JOB FINISHED! Time to verify the results");
+                log.info(jobExecution.getJobParameters().getString("id"));
+            } else {
+                log.info("!!! JOB Failed! Time to verify the results");
+            }
+            
         } catch(Exception e) {
             log.error("jobLauncher.run failed", e);
             throw exceptionFactory.newException(ErrorEnum.FAIL, e);

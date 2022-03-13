@@ -10,6 +10,8 @@ package com.eastx.sap.error;
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
 public enum ErrorEnum {
+    PARAM_NULL("E01"),
+    BATCH_ERROR("E02"),
     ASYNC_RUNNING("501"),
     SUCCESS("200"),
     FAIL("500");
