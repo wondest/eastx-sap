@@ -1,6 +1,5 @@
 package com.eastx.sap.rule.data;
 
-import com.eastx.sap.rule.core.SectionEnum;
 import com.eastx.sap.rule.core.SetEnum;
 
 import java.util.Set;
@@ -14,11 +13,23 @@ import java.util.Set;
  * @Since 1.8
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
-public class SetParameter implements Parameter{
+public class SetParameter implements Parameter {
+    /**
+     *
+     */
+    private Set<Object> set;
 
-    Set<Object> set;
+    /**
+     *
+     */
+    private SetEnum operation;
 
-    SetEnum operation;
+    /**
+     * Just for jackson
+     */
+    public SetParameter() {
+
+    }
 
     public SetParameter(Set<Object> set, SetEnum operation) {
         this.set = set;
@@ -50,5 +61,13 @@ public class SetParameter implements Parameter{
         }  else {
             return false;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "SetParameter{" +
+                "set=" + set +
+                ", operation=" + operation +
+                '}';
     }
 }

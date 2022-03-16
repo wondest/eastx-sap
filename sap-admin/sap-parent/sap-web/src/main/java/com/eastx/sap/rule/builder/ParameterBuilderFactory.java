@@ -9,14 +9,14 @@ package com.eastx.sap.rule.builder;
  * @Since 1.8
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
-public class ParameterBuilder {
+public class ParameterBuilderFactory {
     /**
      * 创建一个构建器
      *
      * @return
      */
-    public static ParameterBuilder builder() {
-        return new ParameterBuilder();
+    public static ParameterBuilderFactory get() {
+        return new ParameterBuilderFactory();
     }
 
     /**
@@ -32,7 +32,7 @@ public class ParameterBuilder {
      * 构建区间参数
      * @return
      */
-    public <T extends Comparable> SectionParameterBuilder section() {
-        return new SectionParameterBuilder<T>();
+    public <T extends Comparable> RangeParameterBuilder section() {
+        return new RangeParameterBuilder<T>();
     }
 }

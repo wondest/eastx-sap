@@ -12,7 +12,7 @@ import com.eastx.sap.rule.data.Parameter;
  * @Since 1.8
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
-public class LoanTypeEvaluator extends AbstractEvaluator<LoanFact, String>{
+public class LoanTypeEvaluator extends AbstractEvaluator<LoanFact, String> {
     public LoanTypeEvaluator(Parameter parameter) {
         super(parameter, LoanFact::getLoanType);
     }

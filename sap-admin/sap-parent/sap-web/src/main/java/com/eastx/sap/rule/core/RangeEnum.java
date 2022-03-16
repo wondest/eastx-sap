@@ -3,7 +3,7 @@ package com.eastx.sap.rule.core;
 /**
  *
  */
-public enum SectionEnum {
+public enum RangeEnum {
     BW,
     GT,GE,
     LT,LE,

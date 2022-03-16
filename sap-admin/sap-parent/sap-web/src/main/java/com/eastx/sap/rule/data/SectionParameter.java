@@ -1,6 +1,6 @@
 package com.eastx.sap.rule.data;
 
-import com.eastx.sap.rule.core.SectionEnum;
+import com.eastx.sap.rule.core.RangeEnum;
 
 /**
  * @ClassName ParameterPO
@@ -17,9 +17,9 @@ public class SectionParameter<T extends Comparable> implements Parameter<T>{
 
     T upper;
 
-    SectionEnum operation;
+    RangeEnum operation;
 
-    public SectionParameter(T lower, T upper, SectionEnum section) {
+    public SectionParameter(T lower, T upper, RangeEnum section) {
         this.upper = upper;
         this.lower = lower;
         this.operation = section;
@@ -41,30 +41,39 @@ public class SectionParameter<T extends Comparable> implements Parameter<T>{
         this.lower = lower;
     }
 
-    public SectionEnum getOperation() {
+    public RangeEnum getOperation() {
         return operation;
     }
 
-    public void setOperation(SectionEnum operation) {
+    public void setOperation(RangeEnum operation) {
         this.operation = operation;
     }
 
     @Override
     public boolean check(T value) {
-        if(SectionEnum.BW.equals(operation)) {
+        if(RangeEnum.BW.equals(operation)) {
             return (upper.compareTo(value) >= 0) && (lower.compareTo(value) <= 0);
-        } else if(SectionEnum.EQ.equals(operation)) {
+        } else if(RangeEnum.EQ.equals(operation)) {
             return (lower.compareTo(upper) == 0) && (lower.compareTo(value) == 0);
-        } else if(SectionEnum.GE.equals(operation)) {
+        } else if(RangeEnum.GE.equals(operation)) {
             return (lower.compareTo(upper) == 0) && (upper.compareTo(value) <= 0);
-        } else if(SectionEnum.GT.equals(operation)) {
+        } else if(RangeEnum.GT.equals(operation)) {
             return (lower.compareTo(upper) == 0) && (upper.compareTo(value) < 0);
-        } else if(SectionEnum.LE.equals(operation)) {
+        } else if(RangeEnum.LE.equals(operation)) {
             return (lower.compareTo(upper) == 0) && (upper.compareTo(value) >= 0);
-        } else if(SectionEnum.LT.equals(operation)) {
+        } else if(RangeEnum.LT.equals(operation)) {
             return (lower.compareTo(upper) == 0) && (upper.compareTo(value) > 0);
         } else {
             return false;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "SectionParameter{" +
+                "lower=" + lower +
+                ", upper=" + upper +
+                ", operation=" + operation +
+                '}';
     }
 }

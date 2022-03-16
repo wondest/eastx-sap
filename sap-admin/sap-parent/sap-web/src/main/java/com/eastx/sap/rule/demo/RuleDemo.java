@@ -1,13 +1,18 @@
-package com.eastx.sap.rule;
+package com.eastx.sap.rule.demo;
 
-import com.eastx.sap.rule.builder.ParameterBuilder;
+import com.eastx.sap.rule.builder.EvaluatorBuilderFactory;
+import com.eastx.sap.rule.builder.ParameterBuilderFactory;
 import com.eastx.sap.rule.core.SimpleRule;
 import com.eastx.sap.rule.data.Parameter;
-import com.eastx.sap.rule.evaluator.EvaluatorFactory;
 import com.eastx.sap.rule.data.LoanFact;
+import com.eastx.sap.rule.data.SetParameter;
 import com.eastx.sap.rule.evaluator.LoanAmtEvaluator;
 import com.eastx.sap.rule.evaluator.LoanTypeEvaluator;
-import com.eastx.sap.rule.processor.LoggerProcessor;
+import com.eastx.sap.rule.processor.ThroughPassProcessor;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * @ClassName RuleMain
@@ -18,7 +23,7 @@ import com.eastx.sap.rule.processor.LoggerProcessor;
  * @Since 1.8
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
-public class RuleMain {
+public class RuleDemo {
 
 
     /**
@@ -31,7 +36,30 @@ public class RuleMain {
     public static void main(String[] argv) {
         System.out.println(" ======== start ========");
 
-        testComposite();
+        testParameter();
+    }
+
+
+    private static void testParameter() {
+        Parameter parameter3 = ParameterBuilderFactory.get()
+                .set()
+                .add("test")
+                .add("test2")
+                .build();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            String value = mapper.writeValueAsString(parameter3);
+            SetParameter object = mapper.readValue(value, SetParameter.class);
+
+            System.out.println(value);
+            System.out.println(object);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     private static void testComposite() {
@@ -39,27 +67,32 @@ public class RuleMain {
         LoanFact fact = new LoanFact();
 
         fact.setLoanType("test");
-        fact.setLoanAmt(99);
+        fact.setLoanAmt(51);
 
         //build parameters
-        Parameter parameter1 = ParameterBuilder.builder()
+        Parameter parameter3 = ParameterBuilderFactory.get()
                 .set()
                 .add("test")
                 .add("test2")
                 .build();
 
-        Parameter parameter2 = ParameterBuilder.builder()
+        Parameter parameter1 = ParameterBuilderFactory.get()
                 .section()
-                .between(Integer.valueOf(10), Integer.valueOf(100))
+                .between(Integer.valueOf(50), Integer.valueOf(100))
+                .build();
+
+        Parameter parameter2 = ParameterBuilderFactory.get()
+                .section()
+                .between(Integer.valueOf(10), Integer.valueOf(60))
                 .build();
 
         //build rule set
         SimpleRule rule = new SimpleRule(
-                  EvaluatorFactory.<LoanFact>stream()
+                EvaluatorBuilderFactory.get().<LoanFact>stream(new LoanAmtEvaluator(parameter1))
                           .and(new LoanAmtEvaluator(parameter2))
-                          .and(new LoanTypeEvaluator(parameter1))
-                          .getObject()
-                , new LoggerProcessor());
+                          .and(new LoanTypeEvaluator(parameter3))
+                          .build()
+                , new ThroughPassProcessor());
 
         //
         rule.fire(fact);

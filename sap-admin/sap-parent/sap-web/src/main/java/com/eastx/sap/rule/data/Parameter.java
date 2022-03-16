@@ -1,5 +1,7 @@
 package com.eastx.sap.rule.data;
 
+import java.io.Serializable;
+
 /**
  * @ClassName ParameterPO
  * @Description: TODO
@@ -9,6 +11,6 @@ package com.eastx.sap.rule.data;
  * @Since 1.8
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
-public interface Parameter<T> {
+public interface Parameter<T> extends Serializable {
     boolean check(T value);
 }

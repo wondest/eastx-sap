@@ -1,6 +1,6 @@
 package com.eastx.sap.rule.builder;
 
-import com.eastx.sap.rule.core.SectionEnum;
+import com.eastx.sap.rule.core.RangeEnum;
 import com.eastx.sap.rule.data.Parameter;
 import com.eastx.sap.rule.data.SectionParameter;
 import org.springframework.util.Assert;
@@ -14,11 +14,11 @@ import org.springframework.util.Assert;
  * @Since 1.8
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
-public class SectionParameterBuilder<T extends Comparable> {
+public class RangeParameterBuilder<T extends Comparable> {
     /**
      * 区间类型
      */
-    private SectionEnum operation;
+    private RangeEnum operation;
 
     /**
      * 下限（如果是eq,那么 lower==upper)
@@ -30,8 +30,8 @@ public class SectionParameterBuilder<T extends Comparable> {
      */
     private T upper;
 
-    public SectionParameterBuilder<T> between(T lower, T upper) {
-        operation = SectionEnum.BW;
+    public RangeParameterBuilder<T> between(T lower, T upper) {
+        this.operation = RangeEnum.BW;
         this.lower = lower;
         this.upper = upper;
         return this;
@@ -42,8 +42,8 @@ public class SectionParameterBuilder<T extends Comparable> {
      * @param value
      * @return
      */
-    public SectionParameterBuilder<T> equal(T value) {
-        return unary(SectionEnum.EQ, value);
+    public RangeParameterBuilder<T> equal(T value) {
+        return unary(RangeEnum.EQ, value);
     }
 
     /**
@@ -51,8 +51,8 @@ public class SectionParameterBuilder<T extends Comparable> {
      * @param value
      * @return
      */
-    public SectionParameterBuilder<T> lessThan(T value) {
-        return unary(SectionEnum.LT, value);
+    public RangeParameterBuilder<T> lessThan(T value) {
+        return unary(RangeEnum.LT, value);
     }
 
     /**
@@ -60,8 +60,8 @@ public class SectionParameterBuilder<T extends Comparable> {
      * @param value
      * @return
      */
-    public SectionParameterBuilder<T> lessEqual(T value) {
-        return unary(SectionEnum.LE, value);
+    public RangeParameterBuilder<T> lessEqual(T value) {
+        return unary(RangeEnum.LE, value);
     }
 
     /**
@@ -69,8 +69,8 @@ public class SectionParameterBuilder<T extends Comparable> {
      * @param value
      * @return
      */
-    public SectionParameterBuilder<T> greaterThan(T value) {
-        return unary(SectionEnum.GT, value);
+    public RangeParameterBuilder<T> greaterThan(T value) {
+        return unary(RangeEnum.GT, value);
     }
 
     /**
@@ -78,8 +78,8 @@ public class SectionParameterBuilder<T extends Comparable> {
      * @param value
      * @return
      */
-    public SectionParameterBuilder<T> greaterEqual(T value) {
-        return unary(SectionEnum.GE, value);
+    public RangeParameterBuilder<T> greaterEqual(T value) {
+        return unary(RangeEnum.GE, value);
     }
 
     /**
@@ -88,7 +88,7 @@ public class SectionParameterBuilder<T extends Comparable> {
      * @param value
      * @return
      */
-    private SectionParameterBuilder<T> unary(SectionEnum operation, T value) {
+    private RangeParameterBuilder<T> unary(RangeEnum operation, T value) {
         this.operation = operation;
         this.lower = value;
         this.upper = value;

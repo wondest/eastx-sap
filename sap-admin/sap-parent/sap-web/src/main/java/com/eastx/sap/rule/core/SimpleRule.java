@@ -1,7 +1,10 @@
 package com.eastx.sap.rule.core;
 
+import com.eastx.sap.rule.data.BaseFact;
 import com.eastx.sap.rule.evaluator.Evaluator;
 import com.eastx.sap.rule.processor.Processor;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 /**
  * @ClassName definition
@@ -20,29 +23,38 @@ import com.eastx.sap.rule.processor.Processor;
  * @Since 1.8
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
-public class SimpleRule<T> implements Rule<T> {
+public class SimpleRule<F extends BaseFact> implements Rule<F>, InitializingBean {
     /**
-     * 求值器
+     * 规则求值器
      */
-    Evaluator<T> evaluator;
+    Evaluator<F> evaluator;
 
     /**
-     * 处理器
+     * 规则处理器
      */
     Processor processor;
 
-    public SimpleRule(Evaluator evaluator, Processor processor) {
+    public SimpleRule(Evaluator<F> evaluator, Processor processor) {
         this.evaluator = evaluator;
         this.processor = processor;
     }
 
     /**
-     *
+     * 发射规则
      */
     @Override
-    public void fire(T fact) {
+    public void fire(F fact) {
         if(evaluator.eval(fact)) {
-            processor.execute();
+            processor.execute(fact);
+            fact.setAccept(true);
+        } else {
+            fact.setAccept(false);
         }
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        Assert.notNull(evaluator, "evaluator should not be null");
+        Assert.notNull(processor, "processor should not be null");
     }
 }
