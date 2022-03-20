@@ -4,9 +4,9 @@ package com.eastx.sap.rule.core;
  *
  */
 public enum OperandEnum {
-    AND(2),
-    OR(1),
-    NA(0),
+    AND(3),
+    OR(2),
+    NAN(1),
     END(0);
 
     OperandEnum(int priority) {

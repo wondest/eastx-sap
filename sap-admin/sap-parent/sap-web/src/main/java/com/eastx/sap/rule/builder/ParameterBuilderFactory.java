@@ -24,15 +24,15 @@ public class ParameterBuilderFactory {
      *
      * @return
      */
-    public SetParameterBuilder set() {
-        return new SetParameterBuilder();
+    public SetParameterBuilder set(String name) {
+        return new SetParameterBuilder(name);
     }
 
     /**
      * 构建区间参数
      * @return
      */
-    public <T extends Comparable> RangeParameterBuilder section() {
-        return new RangeParameterBuilder<T>();
+    public <T extends Comparable> RangeParameterBuilder range(String name) {
+        return new RangeParameterBuilder<T>(name);
     }
 }

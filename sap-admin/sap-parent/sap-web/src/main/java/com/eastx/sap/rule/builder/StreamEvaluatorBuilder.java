@@ -1,9 +1,9 @@
 package com.eastx.sap.rule.builder;
 
 import com.eastx.sap.rule.core.OperandEnum;
-import com.eastx.sap.rule.evaluator.AbstractChainedEvaluator;
-import com.eastx.sap.rule.evaluator.Evaluator;
-import com.eastx.sap.rule.evaluator.ReverseEvaluatorWrapper;
+import com.eastx.sap.rule.core.evaluator.AbstractChainedEvaluator;
+import com.eastx.sap.rule.core.evaluator.Evaluator;
+import com.eastx.sap.rule.core.evaluator.ReverseEvaluatorWrapper;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -148,17 +148,27 @@ public class StreamEvaluatorBuilder<F> {
      */
     public Evaluator<F> build() {
         end();
-        return evalExpression();
+        return evalJavaExpression();
+    }
+
+    /**
+     *
+     * @return
+     */
+    private String evalSpelExpression() {
+        return null;
     }
 
     /**
      *
      * (1) 操作数入值栈
-     * (2.1) 操作符入符号栈，如果当前操作符与当前栈顶符号对比，优先级高，入栈；优先级低，计算，入栈；
-     * (2.2) 操作符入符号栈，如果当前是end操作符，直接入栈
+     * (2.1) 操作符入符号栈，如果当前操作符与当前栈顶符号对比，优先级高>，入栈；优先级低<=，计算，入栈；
+     * (2.2) 操作符入符号栈，如果当前是end操作符，计算，不入栈，end是最低优先级
+     * (2.3) 只有一个操作数：1 END 1入栈，END遇到NAN，NAN不弹出，NAN优先级比END高
+     * (2.4) END操作符，直接break退出
      *
      */
-    private AbstractChainedEvaluator<F> evalExpression() {
+    private AbstractChainedEvaluator<F> evalJavaExpression() {
         //循环计算表达式的值
         while(!expressionDeque.isEmpty()) {
             //从队列头弹出一个元素
@@ -172,7 +182,7 @@ public class StreamEvaluatorBuilder<F> {
                 OperandEnum operand = (OperandEnum)element;
 
                 //when null then give the lowest priority operand
-                OperandEnum topOperand = Optional.ofNullable(operandStack.peek()).orElse(OperandEnum.NA);
+                OperandEnum topOperand = Optional.ofNullable(operandStack.peek()).orElse(OperandEnum.NAN);
 
                 //(不高于栈中的运算符优先级）入栈
                 if(operand.getPriority() <= topOperand.getPriority()) {
@@ -197,11 +207,14 @@ public class StreamEvaluatorBuilder<F> {
                         operatorStack.push(operator1);
                     }
 
-                    //运算符出栈
-                    operandStack.pop();
+                    //非NAN操作符才出栈
+                    if(!topOperand.equals(OperandEnum.NAN)) {
+                        //运算符出栈
+                        operandStack.pop();
+                    }
                 }
 
-                //是否遇到END运算符
+                //遇到END运算符直接break
                 if(OperandEnum.END.equals(operand)) {
                     break;
                 } else {

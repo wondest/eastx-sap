@@ -1,8 +1,8 @@
 package com.eastx.sap.rule.builder;
 
 import com.eastx.sap.rule.core.SetEnum;
-import com.eastx.sap.rule.data.Parameter;
-import com.eastx.sap.rule.data.SetParameter;
+import com.eastx.sap.rule.model.Parameter;
+import com.eastx.sap.rule.model.SetParameter;
 import org.springframework.util.Assert;
 
 import java.util.LinkedList;
@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
 public class SetParameterBuilder {
-
     /**
      *
      */
@@ -29,6 +28,15 @@ public class SetParameterBuilder {
      *
      */
     List<Object> elements = new LinkedList<>();
+
+    /**
+     * 名称 - parameter name
+     */
+    private final String name;
+
+    public SetParameterBuilder(String name) {
+        this.name = name;
+    }
 
     /**
      *
@@ -64,12 +72,13 @@ public class SetParameterBuilder {
      * @return
      */
     public Parameter build() {
-        Assert.notNull(elements, "elements should not be null value");
+        Assert.hasText(name, "name should not be empty");
+        Assert.notNull(elements, "elements should not be null");
 
         if(null == operation) {
             this.operation = SetEnum.INCLUDE;
         }
 
-        return new SetParameter(elements.stream().collect(Collectors.toSet()), operation);
+        return new SetParameter(name, operation, elements.stream().collect(Collectors.toSet()));
     }
 }

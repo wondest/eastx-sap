@@ -1,8 +1,8 @@
 package com.eastx.sap.rule.builder;
 
 import com.eastx.sap.rule.core.RangeEnum;
-import com.eastx.sap.rule.data.Parameter;
-import com.eastx.sap.rule.data.SectionParameter;
+import com.eastx.sap.rule.model.Parameter;
+import com.eastx.sap.rule.model.RangeParameter;
 import org.springframework.util.Assert;
 
 /**
@@ -30,10 +30,22 @@ public class RangeParameterBuilder<T extends Comparable> {
      */
     private T upper;
 
+    /**
+     * 当前值
+     */
+    private T value;
+
+    /**
+     * 名称 - parameter name
+     */
+    private final String name;
+
+    public RangeParameterBuilder(String name) {
+        this.name = name;
+    }
+
     public RangeParameterBuilder<T> between(T lower, T upper) {
-        this.operation = RangeEnum.BW;
-        this.lower = lower;
-        this.upper = upper;
+        binary(RangeEnum.BW, lower, upper);
         return this;
     }
 
@@ -90,8 +102,24 @@ public class RangeParameterBuilder<T extends Comparable> {
      */
     private RangeParameterBuilder<T> unary(RangeEnum operation, T value) {
         this.operation = operation;
-        this.lower = value;
-        this.upper = value;
+        this.lower = null;
+        this.upper = null;
+        this.value = value;
+        return this;
+    }
+
+    /**
+     *
+     * @param operation
+     * @param lower
+     * @param upper
+     * @return
+     */
+    private RangeParameterBuilder<T> binary(RangeEnum operation, T lower, T upper) {
+        this.operation = operation;
+        this.lower = lower;
+        this.upper = upper;
+        this.value = null;
         return this;
     }
 
@@ -100,10 +128,9 @@ public class RangeParameterBuilder<T extends Comparable> {
      * @return
      */
     public Parameter<T> build() {
-        Assert.notNull(operation, "operation should be set with non-null value");
-        Assert.notNull(lower, "lower should be set with non-null value");
-        Assert.notNull(upper, "upper should be set with non-null value");
+        Assert.hasText(name, "name should not be empty");
+        Assert.notNull(operation, "operation should not be null");
 
-        return new SectionParameter<T>(lower, upper, operation);
+        return new RangeParameter<T>(name, operation, value, lower, upper);
     }
 }

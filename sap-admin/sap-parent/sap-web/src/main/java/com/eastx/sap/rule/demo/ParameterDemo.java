@@ -2,13 +2,13 @@ package com.eastx.sap.rule.demo;
 
 import com.eastx.sap.rule.builder.EvaluatorBuilderFactory;
 import com.eastx.sap.rule.builder.ParameterBuilderFactory;
-import com.eastx.sap.rule.engine.DefaultRule;
-import com.eastx.sap.rule.model.Parameter;
-import com.eastx.sap.rule.model.LoanFact;
-import com.eastx.sap.rule.model.SetParameter;
 import com.eastx.sap.rule.core.evaluator.LoanAmtEvaluator;
 import com.eastx.sap.rule.core.evaluator.LoanTypeEvaluator;
 import com.eastx.sap.rule.core.processor.ThroughPassProcessor;
+import com.eastx.sap.rule.engine.DefaultRule;
+import com.eastx.sap.rule.model.LoanFact;
+import com.eastx.sap.rule.model.Parameter;
+import com.eastx.sap.rule.model.SetParameter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @Since 1.8
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
-public class RuleDemo {
+public class ParameterDemo {
 
 
     /**
@@ -34,7 +34,13 @@ public class RuleDemo {
     public static void main(String[] argv) {
         System.out.println(" ======== start ========");
 
-        testParameter();
+        Parameter parameter2 = ParameterBuilderFactory.get()
+                .range("loanAmt")
+                .between(Integer.valueOf(10), Integer.valueOf(60))
+                .build();
+
+        System.out.println(parameter2.getMvel("factVale"));
+        System.out.println(parameter2.getSpel("factVale"));
     }
 
     private static void testMvel() {

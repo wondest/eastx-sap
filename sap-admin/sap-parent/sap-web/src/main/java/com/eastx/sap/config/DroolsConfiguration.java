@@ -4,12 +4,12 @@ import com.eastx.sap.rule.builder.EvaluatorBuilderFactory;
 import com.eastx.sap.rule.demo.DroolsMessage;
 import com.eastx.sap.rule.demo.PackNameFilter;
 import com.eastx.sap.rule.builder.ParameterBuilderFactory;
-import com.eastx.sap.rule.core.SimpleRule;
-import com.eastx.sap.rule.data.LoanFact;
-import com.eastx.sap.rule.data.Parameter;
-import com.eastx.sap.rule.evaluator.LoanAmtEvaluator;
-import com.eastx.sap.rule.evaluator.LoanTypeEvaluator;
-import com.eastx.sap.rule.processor.ThroughPassProcessor;
+import com.eastx.sap.rule.engine.DefaultRule;
+import com.eastx.sap.rule.model.LoanFact;
+import com.eastx.sap.rule.model.Parameter;
+import com.eastx.sap.rule.core.evaluator.LoanAmtEvaluator;
+import com.eastx.sap.rule.core.evaluator.LoanTypeEvaluator;
+import com.eastx.sap.rule.core.processor.ThroughPassProcessor;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
@@ -221,35 +221,36 @@ public class DroolsConfiguration {
 
         //build parameters
         Parameter parameter3 = ParameterBuilderFactory.get()
-                .set()
+                .set("loanType")
                 .add("test")
                 .add("test2")
                 .build();
 
         Parameter parameter1 = ParameterBuilderFactory.get()
-                .section()
+                .range("loanAmt")
                 .between(Integer.valueOf(50), Integer.valueOf(100))
                 .build();
 
         Parameter parameter2 = ParameterBuilderFactory.get()
-                .section()
+                .range("loanAmt")
                 .between(Integer.valueOf(10), Integer.valueOf(60))
                 .build();
 
         //build rule set
-        SimpleRule rule = new SimpleRule(
+        DefaultRule rule = new DefaultRule("0",
                 EvaluatorBuilderFactory.get().<LoanFact>stream(new LoanAmtEvaluator(parameter1))
                         .and(new LoanAmtEvaluator(parameter2))
                         .and(new LoanTypeEvaluator(parameter3))
                         .build()
-                , new ThroughPassProcessor());
+                , new ThroughPassProcessor()
+                ,1);
 
         long startTime = System.currentTimeMillis();
 
-        IntStream.range(0, count).mapToObj(i->new LoanFact(100, "test"))
-                .forEach(o->{
-                    rule.fire(o);;
-                });
+//        IntStream.range(0, count).mapToObj(i->new LoanFact(100, "test"))
+//                .forEach(o->{
+//                    rule.fire(o);;
+//                });
 
         long endTime = System.currentTimeMillis();
 
