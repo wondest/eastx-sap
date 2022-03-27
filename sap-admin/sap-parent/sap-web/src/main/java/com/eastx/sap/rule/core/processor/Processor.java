@@ -1,11 +1,11 @@
 package com.eastx.sap.rule.core.processor;
 
 /**
- *
+ * 条件动作
  */
-public interface Processor<F> {
+public interface Processor {
     /**
-     *
+     * 执行动作
      */
-    void execute(F fact);
+    void execute(Object fact);
 }

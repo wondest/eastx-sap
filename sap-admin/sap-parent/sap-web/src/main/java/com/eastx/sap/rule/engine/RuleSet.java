@@ -8,24 +8,24 @@ import java.util.function.Consumer;
  *
  * @param <R>
  */
-public interface RuleSet<R> {
+public interface RuleSet {
     /**
      * 增加规则
      * @param rule
      */
-    boolean add(R rule);
+    boolean add(Rule rule);
 
     /**
      * 移除规则
      * @param rule
      */
-    boolean remove(R rule);
+    boolean remove(Rule rule);
 
     /**
      * 遍历规则集
      * @param action
      */
-    void forEach(Consumer<R> action);
+    void forEach(Consumer<Rule> action);
 
     /**
      * 规则集是否为空
@@ -43,5 +43,5 @@ public interface RuleSet<R> {
      * 提取所有规则
      * @return
      */
-    Collection<R> getRules();
+    Collection<Rule> getRules();
 }

@@ -1,22 +1,21 @@
 package com.eastx.sap.rule.engine;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * 规则接口
- * @param <F> The fact type
  */
-public interface Rule<F> extends DefaultRuleAdapter {
+public interface Rule extends ExtendRuleAdapter {
     /**
      * 条件求值
      * @return
      */
-    Function<F, Boolean> getCondition();
+    Supplier getCondition();
 
     /**
      * 命中动作
      * @return
      */
-    Consumer<F> getAction();
+    Consumer getAction();
 }

@@ -1,9 +1,11 @@
 package com.eastx.sap.rule.demo;
 
+import com.eastx.sap.rule.adapter.MvelExpressionSymbolAdapter;
+import com.eastx.sap.rule.adapter.SpelExpressionSymbolAdapter;
 import com.eastx.sap.rule.builder.ParameterBuilderFactory;
-import com.eastx.sap.rule.model.LoanFact;
-import com.eastx.sap.rule.model.Parameter;
-import org.mvel2.MVEL;
+import com.eastx.sap.rule.core.evaluator.Evaluator;
+import com.eastx.sap.rule.core.parameter.Parameter;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -32,36 +34,49 @@ public class SpelDemo {
 
         //2 parameter,
 
-        Map<String, Object> parameter = new HashMap<>();
-
-        parameter.put("x", 100);
-        parameter.put("y", 50);
 
         //3.
-        Parameter parameter2 = ParameterBuilderFactory.get()
+        Parameter parameter1 = ParameterBuilderFactory.get()
                 .range("loanAmt")
                 .between(Integer.valueOf(10), Integer.valueOf(60))
                 .build();
 
-        Parameter parameter3 = ParameterBuilderFactory.get()
+        Parameter parameter2 = ParameterBuilderFactory.get()
                 .set("loanType")
-                .exclude()
-                .add("test1")
+                .add("test")
                 .add("test2")
                 .build();
+
+
+//        Rule rule = new RuleBuilderFactory().get("11")
+//                .priority(10)
+//                .condition(LoanFactEvaluators.getLoanAmt(parameter1))
+//                .or(LoanFactEvaluators.getLoanType(parameter2))
+//                .action().processor(new ThroughPassProcessor())
+//                .java()
+//                .build();
+
+        Evaluator evaluator2 = LoanFactEvaluators.getLoanType(parameter2);
+
+        System.out.println(evaluator2.getExpression(new SpelExpressionSymbolAdapter()));
 
         //3
         ExpressionParser parser = new SpelExpressionParser();
 
-        System.out.println(parameter3.getSpel("loanType"));
 
-        Expression expression = parser.parseExpression(parameter3.getSpel("loanType"));
+        Expression expression = parser.parseExpression(evaluator2.getExpression(new SpelExpressionSymbolAdapter()));
+
+        //Expression expression = parser.parseExpression("#fact.loanType=='test'");
+
+
         StandardEvaluationContext context = new StandardEvaluationContext();
 
         //context.setVariables(parameter2.getEntry());
 
         //引用属性不加前缀
-        context.setRootObject(fact);
+        //context.setRootObject(fact);
+
+        context.setVariable("fact", fact);
 
         //
         //context.setVariable("fact", fact);

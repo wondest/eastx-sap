@@ -38,11 +38,11 @@ public abstract class AbstractRule implements BaseRule {
      */
     private boolean repeat;
 
-
-    public AbstractRule(String id, int priority) {
+    public AbstractRule(String id, int priority, boolean exclusive, boolean repeat) {
         this.id = id;
         this.priority = priority;
-        this.exclusive = true;
+        this.exclusive = exclusive;
+        this.repeat = repeat;
     }
 
     @Override
@@ -57,6 +57,15 @@ public abstract class AbstractRule implements BaseRule {
 
     public void setExclusive(boolean exclusive) {
         this.exclusive = exclusive;
+    }
+
+    @Override
+    public boolean isRepeat() {
+        return repeat;
+    }
+
+    public void setRepeat(boolean repeat) {
+        this.repeat = repeat;
     }
 
     @Override

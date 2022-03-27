@@ -23,11 +23,11 @@ public class EvaluatorBuilderFactory {
 
     /**
      * 流式构建
-     * @param <F>
+     * @param evaluator
      * @return
      */
-    public <F> StreamEvaluatorBuilder<F> stream(Evaluator<F> evaluator) {
-        StreamEvaluatorBuilder<F> builder = new StreamEvaluatorBuilder<F>();
+    public StreamEvaluatorBuilder stream(Evaluator evaluator) {
+        StreamEvaluatorBuilder builder = new StreamEvaluatorBuilder();
         return builder.start(evaluator);
     }
 }

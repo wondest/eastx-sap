@@ -9,5 +9,5 @@ public interface RuleExecutor<F> {
      *
      * @return
      */
-    boolean execute(Context<F> context, Rule<F> rule);
+    boolean execute(Context<F> context, Rule rule);
 }

@@ -1,6 +1,7 @@
-package com.eastx.sap.rule.model;
+package com.eastx.sap.rule.core.parameter;
 
-import com.eastx.sap.rule.core.RangeEnum;
+import com.eastx.sap.rule.adapter.ExpressionSymbolAdapter;
+import com.eastx.sap.rule.model.RangeEnum;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -87,49 +88,16 @@ public class RangeParameter<T extends Comparable> implements Parameter<T>{
     }
 
     @Override
-    public String getMvel(String fact) {
-        return switchAction(operation, fact,
-                f->(new StringBuilder(f).append(">=").append(lower).append(" && ")
-                        .append(f).append("<=").append(upper).toString()),
-                f->new StringBuilder(f).append("==").append(value).toString(),
-                f->new StringBuilder(f).append(">=").append(value).toString(),
-                f->new StringBuilder(f).append(">").append(value).toString(),
-                f->new StringBuilder(f).append("<=").append(value).toString(),
-                f->new StringBuilder(f).append("<").append(value).toString());
-    }
-
-    @Override
-    public String getSpel(String fact) {
-        return switchAction(operation, wrapSpelVarLabel(fact),
-                f->new StringBuilder(f).append(">=").append(lower).append(" and ")
-                        .append(f).append("<=").append(upper).toString(),
-                f->new StringBuilder(f).append("==").append(value).toString(),
-                f->new StringBuilder(f).append(">=").append(value).toString(),
-                f->new StringBuilder(f).append(">").append(value).toString(),
-                f->new StringBuilder(f).append("<=").append(value).toString(),
-                f->new StringBuilder(f).append("<").append(value).toString());
-    }
-
-    /**
-     * spel变量名是 #xxx
-     * mvel变量名是 xxx
-     *
-     * @param name
-     * @return
-     */
-    private String wrapSpelVarLabel(String name) {
-        return new StringBuilder("#").append(name).toString();
-    }
-
-    /**
-     *
-     * @return
-     */
-    @Override
-    public Map<String, Object> getEntry() {
-        HashMap<String, Object> entry = new HashMap<>();
-
-        return entry;
+    public String getExpression(String fact, ExpressionSymbolAdapter adapter) {
+        return switchAction(operation, adapter.variable(fact),
+                f->(new StringBuilder(f).append(adapter.greaterOrEqual()).append(lower)
+                        .append(adapter.space()).append(adapter.and()).append(adapter.space())
+                        .append(f).append(adapter.lessOrEqual()).append(upper).toString()),
+                f->new StringBuilder(f).append(adapter.equalTo()).append(value).toString(),
+                f->new StringBuilder(f).append(adapter.greaterOrEqual()).append(value).toString(),
+                f->new StringBuilder(f).append(adapter.greaterThan()).append(value).toString(),
+                f->new StringBuilder(f).append(adapter.lessOrEqual()).append(value).toString(),
+                f->new StringBuilder(f).append(adapter.lessThan()).append(value).toString());
     }
 
     /**

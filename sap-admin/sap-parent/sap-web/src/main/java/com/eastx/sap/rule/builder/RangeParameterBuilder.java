@@ -1,8 +1,8 @@
 package com.eastx.sap.rule.builder;
 
-import com.eastx.sap.rule.core.RangeEnum;
-import com.eastx.sap.rule.model.Parameter;
-import com.eastx.sap.rule.model.RangeParameter;
+import com.eastx.sap.rule.model.RangeEnum;
+import com.eastx.sap.rule.core.parameter.Parameter;
+import com.eastx.sap.rule.core.parameter.RangeParameter;
 import org.springframework.util.Assert;
 
 /**

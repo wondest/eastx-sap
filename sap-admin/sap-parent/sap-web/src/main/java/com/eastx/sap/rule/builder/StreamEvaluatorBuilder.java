@@ -1,7 +1,7 @@
 package com.eastx.sap.rule.builder;
 
-import com.eastx.sap.rule.core.OperandEnum;
-import com.eastx.sap.rule.core.evaluator.AbstractChainedEvaluator;
+import com.eastx.sap.rule.model.OperandEnum;
+import com.eastx.sap.rule.core.evaluator.AbstractCompositeEvaluator;
 import com.eastx.sap.rule.core.evaluator.Evaluator;
 import com.eastx.sap.rule.core.evaluator.ReverseEvaluatorWrapper;
 
@@ -24,7 +24,7 @@ import java.util.Optional;
  * @Since 1.8
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
-public class StreamEvaluatorBuilder<F> {
+public class StreamEvaluatorBuilder {
     /**
      * The stack for bool expression,the object is [ operand->OperandEnum, operator->AbstractChainedEvaluator ]
      */
@@ -33,7 +33,7 @@ public class StreamEvaluatorBuilder<F> {
     /**
      * The stack for operator
      */
-    private Deque<AbstractChainedEvaluator<F>> operatorStack = new ArrayDeque<AbstractChainedEvaluator<F>>();
+    private Deque<AbstractCompositeEvaluator> operatorStack = new ArrayDeque<AbstractCompositeEvaluator>();
 
     /**
      * The stack for operand
@@ -45,7 +45,7 @@ public class StreamEvaluatorBuilder<F> {
      * @param evaluator [ 普通的evaluator 或者 链式的evaluator ]
      * @return
      */
-    public StreamEvaluatorBuilder<F> start(Evaluator<F> evaluator) {
+    public StreamEvaluatorBuilder start(Evaluator evaluator) {
         expressionDeque.offer(wrap(evaluator));
         return this;
     }
@@ -55,7 +55,7 @@ public class StreamEvaluatorBuilder<F> {
      * @param evaluator [ 普通的evaluator 或者 链式的evaluator ]
      * @return
      */
-    public StreamEvaluatorBuilder<F> and(Evaluator<F> evaluator) {
+    public StreamEvaluatorBuilder and(Evaluator evaluator) {
         expressionDeque.offer(OperandEnum.AND);
         expressionDeque.offer(wrap(evaluator));
         return this;
@@ -66,7 +66,7 @@ public class StreamEvaluatorBuilder<F> {
      * @param evaluator
      * @return
      */
-    public StreamEvaluatorBuilder<F> or(Evaluator<F> evaluator) {
+    public StreamEvaluatorBuilder or(Evaluator evaluator) {
         expressionDeque.offer(OperandEnum.OR);
         expressionDeque.offer(wrap(evaluator));
         return this;
@@ -77,7 +77,7 @@ public class StreamEvaluatorBuilder<F> {
      * @param evaluator
      * @return
      */
-    public StreamEvaluatorBuilder<F> andNot(Evaluator<F> evaluator) {
+    public StreamEvaluatorBuilder andNot(Evaluator evaluator) {
         expressionDeque.offer(OperandEnum.AND);
         expressionDeque.offer(wrap(new ReverseEvaluatorWrapper<>(evaluator)));
         return this;
@@ -88,7 +88,7 @@ public class StreamEvaluatorBuilder<F> {
      * @param evaluator
      * @return
      */
-    public StreamEvaluatorBuilder<F> orNot(Evaluator<F> evaluator) {
+    public StreamEvaluatorBuilder orNot(Evaluator evaluator) {
         expressionDeque.offer(OperandEnum.OR);
         expressionDeque.offer(wrap(new ReverseEvaluatorWrapper<>(evaluator)));
         return this;
@@ -98,7 +98,7 @@ public class StreamEvaluatorBuilder<F> {
      *
      * @return
      */
-    private StreamEvaluatorBuilder<F> end() {
+    private StreamEvaluatorBuilder end() {
         expressionDeque.offer(OperandEnum.END);
         return this;
     }
@@ -108,11 +108,11 @@ public class StreamEvaluatorBuilder<F> {
      * @param evaluator
      * @return
      */
-    private AbstractChainedEvaluator<F> wrap(Evaluator<F> evaluator) {
-        if(evaluator instanceof AbstractChainedEvaluator.BodySelf) {
-            return (AbstractChainedEvaluator<F>)evaluator;
+    private AbstractCompositeEvaluator wrap(Evaluator evaluator) {
+        if(evaluator instanceof AbstractCompositeEvaluator.BodySelf) {
+            return (AbstractCompositeEvaluator)evaluator;
         } else {
-            return new AbstractChainedEvaluator.BodySelf(evaluator);
+            return new AbstractCompositeEvaluator.BodySelf(evaluator);
         }
     }
 
@@ -121,11 +121,11 @@ public class StreamEvaluatorBuilder<F> {
      * @param evaluator
      * @return
      */
-    private AbstractChainedEvaluator<F> wrapAnd(Evaluator<F> evaluator) {
-        if(evaluator instanceof AbstractChainedEvaluator.BodyAnd) {
-            return (AbstractChainedEvaluator<F>)evaluator;
+    private AbstractCompositeEvaluator wrapAnd(Evaluator evaluator) {
+        if(evaluator instanceof AbstractCompositeEvaluator.BodyAnd) {
+            return (AbstractCompositeEvaluator)evaluator;
         } else {
-            return new AbstractChainedEvaluator.BodyAnd(evaluator);
+            return new AbstractCompositeEvaluator.BodyAnd(evaluator);
         }
     }
 
@@ -134,11 +134,11 @@ public class StreamEvaluatorBuilder<F> {
      * @param evaluator
      * @return
      */
-    private AbstractChainedEvaluator<F> wrapOr(Evaluator<F> evaluator) {
-        if(evaluator instanceof AbstractChainedEvaluator.BodyOr) {
-            return (AbstractChainedEvaluator<F>)evaluator;
+    private AbstractCompositeEvaluator wrapOr(Evaluator evaluator) {
+        if(evaluator instanceof AbstractCompositeEvaluator.BodyOr) {
+            return (AbstractCompositeEvaluator)evaluator;
         } else {
-            return new AbstractChainedEvaluator.BodyOr(evaluator);
+            return new AbstractCompositeEvaluator.BodyOr(evaluator);
         }
     }
 
@@ -146,37 +146,27 @@ public class StreamEvaluatorBuilder<F> {
      *
      * @return
      */
-    public Evaluator<F> build() {
+    public Evaluator build() {
         end();
         return evalJavaExpression();
     }
 
     /**
-     *
-     * @return
-     */
-    private String evalSpelExpression() {
-        return null;
-    }
-
-    /**
-     *
      * (1) 操作数入值栈
      * (2.1) 操作符入符号栈，如果当前操作符与当前栈顶符号对比，优先级高>，入栈；优先级低<=，计算，入栈；
      * (2.2) 操作符入符号栈，如果当前是end操作符，计算，不入栈，end是最低优先级
      * (2.3) 只有一个操作数：1 END 1入栈，END遇到NAN，NAN不弹出，NAN优先级比END高
      * (2.4) END操作符，直接break退出
-     *
      */
-    private AbstractChainedEvaluator<F> evalJavaExpression() {
+    private AbstractCompositeEvaluator evalJavaExpression() {
         //循环计算表达式的值
         while(!expressionDeque.isEmpty()) {
             //从队列头弹出一个元素
             Object element = expressionDeque.poll();
 
-            if(element instanceof AbstractChainedEvaluator) {
+            if(element instanceof AbstractCompositeEvaluator) {
                 //操作数入栈
-                operatorStack.push((AbstractChainedEvaluator)element);
+                operatorStack.push((AbstractCompositeEvaluator)element);
             } else {
                 //操作符处理
                 OperandEnum operand = (OperandEnum)element;
@@ -188,8 +178,8 @@ public class StreamEvaluatorBuilder<F> {
                 if(operand.getPriority() <= topOperand.getPriority()) {
                     //计算 入栈
                     if(OperandEnum.AND.equals(topOperand)) {
-                        AbstractChainedEvaluator operator1 = wrapAnd(operatorStack.pop());
-                        AbstractChainedEvaluator operator2 = wrapAnd(operatorStack.pop());
+                        AbstractCompositeEvaluator operator1 = wrapAnd(operatorStack.pop());
+                        AbstractCompositeEvaluator operator2 = wrapAnd(operatorStack.pop());
 
                         //操作数计算
                         operator1.extend(operator2);
@@ -197,8 +187,8 @@ public class StreamEvaluatorBuilder<F> {
                         //操作数入栈
                         operatorStack.push(operator1);
                     } else if(OperandEnum.OR.equals(topOperand)) {
-                        AbstractChainedEvaluator operator1 = wrapOr(operatorStack.pop());
-                        AbstractChainedEvaluator operator2 = wrapOr(operatorStack.pop());
+                        AbstractCompositeEvaluator operator1 = wrapOr(operatorStack.pop());
+                        AbstractCompositeEvaluator operator2 = wrapOr(operatorStack.pop());
 
                         //操作数计算
                         operator1.extend(operator2);

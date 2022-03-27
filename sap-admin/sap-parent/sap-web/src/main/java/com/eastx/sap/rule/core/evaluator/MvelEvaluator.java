@@ -1,5 +1,6 @@
 package com.eastx.sap.rule.core.evaluator;
 
+import com.eastx.sap.rule.adapter.ExpressionSymbolAdapter;
 import org.springframework.util.Assert;
 
 import java.util.Map;
@@ -14,7 +15,7 @@ import org.mvel2.MVEL;
  * @Since 1.8
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
-public class MvelEvaluator<F> implements Evaluator<F> {
+public class MvelEvaluator<F> implements Evaluator {
     /**
      * 预设参数
      */
@@ -34,8 +35,13 @@ public class MvelEvaluator<F> implements Evaluator<F> {
     }
 
     @Override
-    public boolean execute(F fact) {
+    public boolean execute(Object fact) {
         //如果需要带前缀,parameter.push("fact",fact),通过fact.xxx访问具体属性
         return (Boolean)MVEL.eval(expression, fact, parameter);
+    }
+
+    @Override
+    public String getExpression(ExpressionSymbolAdapter adapter) {
+        return null;
     }
 }

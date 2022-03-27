@@ -9,14 +9,14 @@ import java.util.function.Consumer;
 /**
  * @param <R>
  */
-public class DefaultRuleSet<R extends BaseRule> implements RuleSet<R> {
+public class DefaultRuleSet<R extends BaseRule> implements RuleSet {
     /**
      * 规则集容器
      */
-    private Map<String, R> rules = new HashMap<>();
+    private Map<String, Rule> rules = new HashMap<>();
 
     @Override
-    public boolean add(R rule) {
+    public boolean add(Rule rule) {
         if (rules.containsKey(rule.getId())) {
             return false;
         } else {
@@ -27,14 +27,14 @@ public class DefaultRuleSet<R extends BaseRule> implements RuleSet<R> {
     }
 
     @Override
-    public boolean remove(R rule) {
+    public boolean remove(Rule rule) {
         return (null != rules.remove(rule.getId()));
     }
 
     @Override
-    public void forEach(Consumer<R> action) {
+    public void forEach(Consumer<Rule> action) {
         rules.entrySet().stream().map(e -> e.getValue())
-                .sorted(Comparator.comparing(R::getPriority).reversed())
+                .sorted(Comparator.comparing(Rule::getPriority).reversed())
                 .forEach(action);
     }
 
@@ -49,7 +49,7 @@ public class DefaultRuleSet<R extends BaseRule> implements RuleSet<R> {
     }
 
     @Override
-    public Collection<R> getRules() {
+    public Collection<Rule> getRules() {
         return rules.values();
     }
 }

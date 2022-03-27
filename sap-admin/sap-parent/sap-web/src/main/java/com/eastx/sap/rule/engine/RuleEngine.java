@@ -19,5 +19,5 @@ public interface RuleEngine<F> {
     /**
      * 装配规则集
      */
-    void assemble(RuleSet<Rule<F>> rules);
+    void assemble(RuleSet rules);
 }

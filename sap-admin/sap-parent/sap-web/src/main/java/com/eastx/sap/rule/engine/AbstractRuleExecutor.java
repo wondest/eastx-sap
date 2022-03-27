@@ -1,7 +1,7 @@
 package com.eastx.sap.rule.engine;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * 规则执行器
@@ -10,7 +10,7 @@ import java.util.function.Function;
  */
 abstract class AbstractRuleExecutor<F> implements RuleExecutor<F> {
     @Override
-    public boolean execute(Context<F> context, Rule<F> rule) {
+    public boolean execute(Context<F> context, Rule rule) {
         if (evalCondition(context, rule.getCondition())) {
             processAction(context, rule.getAction());
             return true;
@@ -26,7 +26,7 @@ abstract class AbstractRuleExecutor<F> implements RuleExecutor<F> {
      * @param condition
      * @return
      */
-    protected abstract boolean evalCondition(Context<F> context, Function<F, Boolean> condition);
+    protected abstract boolean evalCondition(Context<F> context, Supplier condition);
 
     /**
      * 规则动作
@@ -34,5 +34,5 @@ abstract class AbstractRuleExecutor<F> implements RuleExecutor<F> {
      * @param context
      * @param action
      */
-    protected abstract void processAction(Context<F> context, Consumer<F> action);
+    protected abstract void processAction(Context<F> context, Consumer action);
 }

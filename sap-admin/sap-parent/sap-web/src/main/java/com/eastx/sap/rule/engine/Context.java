@@ -20,13 +20,13 @@ public interface Context<F> {
      *
      * @param rule
      */
-    void hitRule(Rule<F> rule);
+    void hitRule(Rule rule);
 
     /**
      *
      * @param rule
      */
-    default void passRule(Rule<F> rule) {
+    default void passRule(Rule rule) {
         throw new UnsupportedOperationException("pass the rule");
     }
 
@@ -34,7 +34,7 @@ public interface Context<F> {
      *
      * @param rule
      */
-    default void rejectRule(Rule<F> rule) {
+    default void rejectRule(Rule rule) {
         throw new UnsupportedOperationException("reject the rule");
     }
 

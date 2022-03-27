@@ -1,13 +1,9 @@
 package com.eastx.sap.rule.demo;
 
-import com.eastx.sap.rule.builder.EvaluatorBuilderFactory;
 import com.eastx.sap.rule.builder.ParameterBuilderFactory;
-import com.eastx.sap.rule.model.LoanFact;
-import com.eastx.sap.rule.model.Parameter;
+import com.eastx.sap.rule.core.parameter.Parameter;
 import com.eastx.sap.rule.engine.*;
-import com.eastx.sap.rule.core.evaluator.LoanAmtEvaluator;
-import com.eastx.sap.rule.core.evaluator.LoanTypeEvaluator;
-import com.eastx.sap.rule.core.processor.ThroughPassProcessor;
+import com.eastx.sap.rule.factory.RuleEngineFactory;
 
 /**
  * @ClassName RuleEngineDemo
@@ -30,12 +26,12 @@ public class MvelEngineDemo {
         Context<LoanFact> context = new DefaultContext<>(fact);
 
         //2. engine
-        DefaultRuleEngineFactory factory = new DefaultRuleEngineFactory();
+        RuleEngineFactory factory = new RuleEngineFactory();
 
         RuleEngine<LoanFact> engine = factory.getDefaultEngine();
 
         //3. rule set
-        RuleSet<Rule<LoanFact>> ruleSet = new DefaultRuleSet();
+        RuleSet ruleSet = new DefaultRuleSet();
 
         ruleSet.add(buildAcceptRule("rule11", 5));
         ruleSet.add(buildAcceptRule("rule12", 6));
@@ -52,7 +48,7 @@ public class MvelEngineDemo {
         System.out.println(context);
     }
 
-    private static DefaultRule<LoanFact> buildAcceptRule(String id, int priority) {
+    private static BeanRule buildAcceptRule(String id, int priority) {
         //build parameters
         Parameter parameter3 = ParameterBuilderFactory.get()
                 .set("loanType")
@@ -71,18 +67,18 @@ public class MvelEngineDemo {
                 .build();
 
         //build rule set
-        DefaultRule<LoanFact> rule = new DefaultRule<LoanFact>(id,
-                EvaluatorBuilderFactory.get().<LoanFact>stream(new LoanAmtEvaluator(parameter1))
-                        .and(new LoanAmtEvaluator(parameter2))
-                        .and(new LoanTypeEvaluator(parameter3))
-                        .build()
-                , new ThroughPassProcessor()
-                ,priority);
+//        DefaultRule<LoanFact> rule = new DefaultRule<LoanFact>(id,
+//                EvaluatorBuilderFactory.get().<LoanFact>stream(new LoanAmtEvaluator(parameter1))
+//                        .and(new LoanAmtEvaluator(parameter2))
+//                        .and(new LoanTypeEvaluator(parameter3))
+//                        .build()
+//                , new ThroughPassProcessor()
+//                ,priority);
 
-        return rule;
+        return null;
     }
 
-    private static DefaultRule<LoanFact> buildRejectRule(String id, int priority) {
+    private static BeanRule buildRejectRule(String id, int priority) {
         //build parameters
         Parameter parameter3 = ParameterBuilderFactory.get()
                 .set("loanType")
@@ -101,13 +97,13 @@ public class MvelEngineDemo {
                 .build();
 
         //build rule set
-        DefaultRule<LoanFact> rule = new DefaultRule<LoanFact>(id,
-                EvaluatorBuilderFactory.get().<LoanFact>stream(new LoanAmtEvaluator(parameter1))
-                        .and(new LoanAmtEvaluator(parameter2))
-                        .and(new LoanTypeEvaluator(parameter3))
-                        .build()
-                , new ThroughPassProcessor()
-                ,priority);
-        return rule;
+//        DefaultRule<LoanFact> rule = new DefaultRule<LoanFact>(id,
+//                EvaluatorBuilderFactory.get().<LoanFact>stream(new LoanAmtEvaluator(parameter1))
+//                        .and(new LoanAmtEvaluator(parameter2))
+//                        .and(new LoanTypeEvaluator(parameter3))
+//                        .build()
+//                , new ThroughPassProcessor()
+//                ,priority);
+        return null;
     }
 }

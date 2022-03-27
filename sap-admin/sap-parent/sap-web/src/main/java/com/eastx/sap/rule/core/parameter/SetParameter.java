@@ -1,7 +1,7 @@
-package com.eastx.sap.rule.model;
+package com.eastx.sap.rule.core.parameter;
 
-import com.eastx.sap.rule.core.RangeEnum;
-import com.eastx.sap.rule.core.SetEnum;
+import com.eastx.sap.rule.adapter.ExpressionSymbolAdapter;
+import com.eastx.sap.rule.model.SetEnum;
 
 import java.util.Map;
 import java.util.Set;
@@ -81,13 +81,13 @@ public class SetParameter implements Parameter {
     }
 
     @Override
-    public String getMvel(String fact) {
+    public String getExpression(String fact, ExpressionSymbolAdapter adapter) {
         // (fact == xx1 or fact == xx2
-        return switchAction(operation, fact,
+        return switchAction(operation, adapter.variable(fact),
                 // (fact == xx1 or fact == xx2)
-                f->getIncludeExpression(f, " || "),
+                f->getIncludeExpression(f, adapter),
                 // (fact != xx1 or fact != xx2)
-                f->getExcludeExpression(f, " && "));
+                f->getExcludeExpression(f, adapter));
     }
 
     /**
@@ -122,11 +122,14 @@ public class SetParameter implements Parameter {
     /**
      *
      * @param fact
-     * @param connectOperand
+     * @param adapter
      * @return
      */
-    private String getIncludeExpression(String fact, String connectOperand) {
-        return getExpression(fact, "1=0", "==", connectOperand);
+    private String getIncludeExpression(String fact, ExpressionSymbolAdapter adapter) {
+        return getExpression(fact,
+                new StringBuilder().append("1").append(adapter.equalTo()).append("0").toString(),
+                adapter.equalTo(),
+                new StringBuilder().append(adapter.space()).append(adapter.or()).append(adapter.space()).toString());
     }
 
     /**
@@ -134,23 +137,11 @@ public class SetParameter implements Parameter {
      * @param fact
      * @return
      */
-    private String getExcludeExpression(String fact, String connectOperand) {
-        return getExpression(fact, "1=1", "!=", connectOperand);
-    }
-
-    @Override
-    public String getSpel(String fact) {
-        // (fact == xx1 or fact == xx2
-        return switchAction(operation, fact,
-                // (fact == xx1 or fact == xx2)
-                f->getIncludeExpression(f, " or "),
-                // (fact != xx1 or fact != xx2)
-                f->getExcludeExpression(f, " and "));
-    }
-
-    @Override
-    public Map<String, Object> getEntry() {
-        return null;
+    private String getExcludeExpression(String fact, ExpressionSymbolAdapter adapter) {
+        return getExpression(fact,
+                new StringBuilder().append("1").append(adapter.equalTo()).append("1").toString(),
+                adapter.notEqual(),
+                new StringBuilder().append(adapter.space()).append(adapter.and()).append(adapter.space()).toString());
     }
 
     /**

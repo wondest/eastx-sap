@@ -29,12 +29,12 @@ public class DefaultContext<F> implements Context<F> {
     /**
      * 接受的规则
      */
-    private List<Rule<F>> acceptRules;
+    private List<Rule> acceptRules;
 
     /**
      * 拒绝的规则
      */
-    private List<Rule<F>> rejectRules;
+    private List<Rule> rejectRules;
 
     /**
      * 跳过的规则

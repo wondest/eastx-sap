@@ -1,4 +1,4 @@
-package com.eastx.sap.rule.core;
+package com.eastx.sap.rule.model;
 
 /**
  *

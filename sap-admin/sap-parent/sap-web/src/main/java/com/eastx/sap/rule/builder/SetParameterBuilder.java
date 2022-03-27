@@ -1,8 +1,8 @@
 package com.eastx.sap.rule.builder;
 
-import com.eastx.sap.rule.core.SetEnum;
-import com.eastx.sap.rule.model.Parameter;
-import com.eastx.sap.rule.model.SetParameter;
+import com.eastx.sap.rule.model.SetEnum;
+import com.eastx.sap.rule.core.parameter.Parameter;
+import com.eastx.sap.rule.core.parameter.SetParameter;
 import org.springframework.util.Assert;
 
 import java.util.LinkedList;

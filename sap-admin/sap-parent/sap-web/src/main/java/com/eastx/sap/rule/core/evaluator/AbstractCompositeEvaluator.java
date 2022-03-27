@@ -1,5 +1,7 @@
 package com.eastx.sap.rule.core.evaluator;
 
+import com.eastx.sap.rule.adapter.ExpressionSymbolAdapter;
+
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
@@ -9,27 +11,25 @@ import java.util.function.Supplier;
  *
  *    (1) 链表方式构建，实现Evaluator接口
  *    (2) 实现：combine(self,next)
- *
- * @param <F>
  */
-public abstract class AbstractChainedEvaluator<F> implements Evaluator<F> {
+public abstract class AbstractCompositeEvaluator implements Evaluator {
     /**
      * 责任链中下一个处理单元
      */
-    private AbstractChainedEvaluator next;
+    private AbstractCompositeEvaluator next;
 
     /**
      * 责任链中下一个处理单元
      */
-    private AbstractChainedEvaluator tail;
+    private AbstractCompositeEvaluator tail;
 
-    AbstractChainedEvaluator() {
+    AbstractCompositeEvaluator() {
         this.tail = this;
         this.next = null;
     }
 
     @Override
-    public boolean execute(F fact) {
+    public boolean execute(Object fact) {
         return combine(evalSelf(fact), ()->evalNext(fact));
     }
 
@@ -48,7 +48,7 @@ public abstract class AbstractChainedEvaluator<F> implements Evaluator<F> {
      * @param fact
      * @return
      */
-    private Boolean evalNext(F fact) {
+    private Boolean evalNext(Object fact) {
         if(null == next) {
             return null;
         } else {
@@ -62,7 +62,7 @@ public abstract class AbstractChainedEvaluator<F> implements Evaluator<F> {
      * @param fact
      * @return
      */
-    protected abstract boolean evalSelf(F fact);
+    protected abstract boolean evalSelf(Object fact);
 
     /**
      *  a chain: a1->a2->a3
@@ -71,7 +71,7 @@ public abstract class AbstractChainedEvaluator<F> implements Evaluator<F> {
      *  a.append(b) ->  a1->a2->a3->b(b1->b2->b3)
      * @param evaluator
      */
-    public void append(AbstractChainedEvaluator evaluator) {
+    public void append(AbstractCompositeEvaluator evaluator) {
         this.tail.next = evaluator;
         this.tail = evaluator;
     }
@@ -83,27 +83,51 @@ public abstract class AbstractChainedEvaluator<F> implements Evaluator<F> {
      *  a.append(b) ->  a1->a2->a3->b1->b2->b3
      * @param evaluator
      */
-    public void extend(AbstractChainedEvaluator evaluator) {
+    public void extend(AbstractCompositeEvaluator evaluator) {
         this.tail.next = evaluator;
         this.tail = evaluator.tail;
     }
+
+
+    /**
+     * 获取求值表达式
+     *
+     * @param adapter  -- 语言适配
+     * @return
+     */
+    @Override
+    public String getExpression(ExpressionSymbolAdapter adapter) {
+        StringBuilder expression = Optional.ofNullable(getSelfExpression(adapter))
+                .map(s->new StringBuilder(s))
+                .orElse(new StringBuilder());
+
+        return Optional.ofNullable(next)
+                .map(n->expression.append(n.getExpression(adapter)))
+                .orElse(expression).toString();
+    }
+
+    abstract String getSelfExpression(ExpressionSymbolAdapter adapter);
 
     /**
      * The head
      *
      *   计算的时候，穿透直接使用next的真值
      *   如果next为空，则给默认的true(参考drools,没写条件默认位asset(true))
-     * @param <F>
      */
-    static class Head<F> extends AbstractChainedEvaluator<F> {
+    static class Head extends AbstractCompositeEvaluator {
         @Override
         protected boolean combine(boolean selfResult, Supplier<Boolean> nextResult) {
             return Optional.ofNullable(nextResult.get()).orElse(true);
         }
 
         @Override
-        protected boolean evalSelf(F fact) {
+        protected boolean evalSelf(Object fact) {
             return true;
+        }
+
+        @Override
+        String getSelfExpression(ExpressionSymbolAdapter adapter) {
+            return null;
         }
     }
 
@@ -112,21 +136,19 @@ public abstract class AbstractChainedEvaluator<F> implements Evaluator<F> {
      *
      *    (1) combine the self and next using the combiner
      *    (2) 如果next为空，直接使用self真值
-     *
-     * @param <F>
      */
-    private static class Body<F> extends AbstractChainedEvaluator<F> {
+    private static abstract class Body extends AbstractCompositeEvaluator {
         /**
          * 代理处理
          */
-        private Evaluator<F> delegate;
+        private Evaluator delegate;
 
         /**
          * 真值合并
          */
         private BiFunction<Boolean, Supplier<Boolean>, Boolean> combiner;
 
-        public Body(Evaluator<F> delegate, BiFunction<Boolean, Supplier<Boolean>, Boolean> combiner) {
+        public Body(Evaluator delegate, BiFunction<Boolean, Supplier<Boolean>, Boolean> combiner) {
             this.delegate = delegate;
             this.combiner = combiner;
         }
@@ -137,29 +159,34 @@ public abstract class AbstractChainedEvaluator<F> implements Evaluator<F> {
         }
 
         @Override
-        protected boolean evalSelf(F fact) {
+        protected boolean evalSelf(Object fact) {
             return delegate.execute(fact);
+        }
+
+        protected Evaluator getDelegate() {
+            return delegate;
+        }
+
+        @Override
+        protected String getSelfExpression(ExpressionSymbolAdapter adapter) {
+            return getDelegate().getExpression(adapter);
         }
     }
 
     /**
-     * The self
-     *    (1) combine is just use self
-     * @param <F>
+     * self,next -> self
      */
-    public static class BodySelf<F> extends Body<F> {
-        public BodySelf(Evaluator<F> delegate) {
+    public static class BodySelf extends Body {
+        public BodySelf(Evaluator delegate) {
             super(delegate, (self, next)-> self);
         }
     }
 
     /**
-     * The tail
-     *    (1) combine is just use or
-     * @param <F>
+     * self,next -> self
      */
-    public static class BodyAnd<F> extends Body<F> {
-        public BodyAnd(Evaluator<F> delegate) {
+    public static class BodyAnd extends Body {
+        public BodyAnd(Evaluator delegate) {
             super(delegate, (self, next)-> {
                 if(!self) {
                     //短路操作
@@ -169,15 +196,19 @@ public abstract class AbstractChainedEvaluator<F> implements Evaluator<F> {
                 return Optional.ofNullable(next.get()).orElse(true);
             });
         }
+
+        @Override
+        protected String getSelfExpression(ExpressionSymbolAdapter adapter) {
+            return new StringBuilder().append(getDelegate().getExpression(adapter))
+                    .append("AND").toString();
+        }
     }
 
     /**
-     * The tail
-     *    (1) combine is just use or
-     * @param <F>
+     * self OR next ->
      */
-    public static class BodyOr<F> extends Body<F> {
-        public BodyOr(Evaluator<F> delegate) {
+    public static class BodyOr extends Body {
+        public BodyOr(Evaluator delegate) {
             super(delegate, (self, next)-> {
                 if(self) {
                     //短路操作
@@ -186,6 +217,12 @@ public abstract class AbstractChainedEvaluator<F> implements Evaluator<F> {
 
                 return Optional.ofNullable(next.get()).orElse(false);
             });
+        }
+
+        @Override
+        protected String getSelfExpression(ExpressionSymbolAdapter adapter) {
+            return new StringBuilder().append(getDelegate().getExpression(adapter))
+                    .append("OR").toString();
         }
     }
 }

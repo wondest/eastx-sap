@@ -1,8 +1,9 @@
 package com.eastx.sap.rule.demo;
 
+import com.eastx.sap.rule.adapter.MvelExpressionSymbolAdapter;
 import com.eastx.sap.rule.builder.ParameterBuilderFactory;
-import com.eastx.sap.rule.model.LoanFact;
-import com.eastx.sap.rule.model.Parameter;
+import com.eastx.sap.rule.core.evaluator.Evaluator;
+import com.eastx.sap.rule.core.parameter.Parameter;
 import org.mvel2.MVEL;
 
 import java.util.HashMap;
@@ -37,26 +38,35 @@ public class MvelDemo {
 //        parameter.put("fact", fact);
 
         //3.
-        Parameter parameter2 = ParameterBuilderFactory.get()
+        Parameter parameter1 = ParameterBuilderFactory.get()
                 .range("loanAmt")
                 .between(Integer.valueOf(10), Integer.valueOf(60))
                 .build();
 
-        Parameter parameter1= ParameterBuilderFactory.get()
-                .range("loanAmt")
-                .lessThan(Integer.valueOf(60))
-                .build();
-
-        Parameter parameter3 = ParameterBuilderFactory.get()
+        Parameter parameter2 = ParameterBuilderFactory.get()
                 .set("loanType")
                 .add("test")
                 .add("test2")
                 .build();
 
-        System.out.println(parameter3.getMvel("loanType"));
-        System.out.println(parameter3.getEntry());
 
-        Boolean result = (Boolean)MVEL.eval(parameter3.getMvel("loanType"), fact);
+//        Rule rule = new RuleBuilderFactory().get("11")
+//                .priority(10)
+//                .condition(LoanFactEvaluators.getLoanAmt(parameter1))
+//                .or(LoanFactEvaluators.getLoanType(parameter2))
+//                .action().processor(new ThroughPassProcessor())
+//                .java()
+//                .build();
+
+        Evaluator evaluator2 = LoanFactEvaluators.getLoanType(parameter2);
+
+        System.out.println(evaluator2.getExpression(new MvelExpressionSymbolAdapter()));
+
+        Map<String, Object> varialbes = new HashMap<>(1);
+        varialbes.put("fact", fact);
+
+        Boolean result = (Boolean)MVEL.eval(evaluator2.getExpression(new MvelExpressionSymbolAdapter())
+                , varialbes);
 
         System.out.println(result);
 

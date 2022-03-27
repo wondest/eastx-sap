@@ -1,4 +1,4 @@
-package com.eastx.sap.rule.model;
+package com.eastx.sap.rule.demo;
 
 /**
  * @ClassName Fact
@@ -9,7 +9,7 @@ package com.eastx.sap.rule.model;
  * @Since 1.8
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
-public class LoanFact extends BaseFact {
+public class LoanFact {
     /**
      * 贷款本金
      */
@@ -19,15 +19,6 @@ public class LoanFact extends BaseFact {
      * 还款方式
      */
     private String loanType;
-
-    public LoanFact(Integer loanAmt, String loanType) {
-        this.loanAmt = loanAmt;
-        this.loanType = loanType;
-    }
-
-    public LoanFact() {
-
-    }
 
     public Integer getLoanAmt() {
         return loanAmt;

@@ -1,5 +1,6 @@
 package com.eastx.sap.rule.core.evaluator;
 
+import com.eastx.sap.rule.adapter.ExpressionSymbolAdapter;
 import org.springframework.expression.Expression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -16,7 +17,7 @@ import java.util.Map;
  * @Since 1.8
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
-public class SpelEvaluator<F> implements Evaluator<F> {
+public class SpelEvaluator<F> implements Evaluator {
     /**
      * 预设参数
      */
@@ -47,7 +48,7 @@ public class SpelEvaluator<F> implements Evaluator<F> {
     }
 
     @Override
-    public boolean execute(F fact) {
+    public boolean execute(Object fact) {
         StandardEvaluationContext context = new StandardEvaluationContext();
 
         //设置参数
@@ -60,5 +61,10 @@ public class SpelEvaluator<F> implements Evaluator<F> {
         //context.setVariable(prefix, fact);
 
         return (Boolean)expression.getValue(context);
+    }
+
+    @Override
+    public String getExpression(ExpressionSymbolAdapter adapter) {
+        return null;
     }
 }

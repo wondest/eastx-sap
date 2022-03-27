@@ -17,7 +17,7 @@ public class DefaultRuleEngine<F> implements RuleEngine<F> {
     /**
      * 规则集
      */
-    private RuleSet<Rule<F>> rules;
+    private RuleSet rules;
 
     /**
      *
@@ -62,14 +62,14 @@ public class DefaultRuleEngine<F> implements RuleEngine<F> {
     }
 
     @Override
-    public void assemble(RuleSet<Rule<F>> ruleSet) {
+    public void assemble(RuleSet ruleSet) {
         this.rules = ruleSet;
     }
 
     /**
      * @param action
      */
-    private void forEachRule(Consumer<Rule<F>> action) {
+    private void forEachRule(Consumer<Rule> action) {
         rules.forEach(action);
     }
 }

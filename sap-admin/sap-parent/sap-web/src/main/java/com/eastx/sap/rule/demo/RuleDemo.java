@@ -1,14 +1,8 @@
 package com.eastx.sap.rule.demo;
 
-import com.eastx.sap.rule.builder.EvaluatorBuilderFactory;
 import com.eastx.sap.rule.builder.ParameterBuilderFactory;
-import com.eastx.sap.rule.engine.DefaultRule;
-import com.eastx.sap.rule.model.Parameter;
-import com.eastx.sap.rule.model.LoanFact;
-import com.eastx.sap.rule.model.SetParameter;
-import com.eastx.sap.rule.core.evaluator.LoanAmtEvaluator;
-import com.eastx.sap.rule.core.evaluator.LoanTypeEvaluator;
-import com.eastx.sap.rule.core.processor.ThroughPassProcessor;
+import com.eastx.sap.rule.core.parameter.Parameter;
+import com.eastx.sap.rule.core.parameter.SetParameter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -88,13 +82,13 @@ public class RuleDemo {
                 .build();
 
         //build rule set
-        DefaultRule rule = new DefaultRule("0",
-                EvaluatorBuilderFactory.get().<LoanFact>stream(new LoanAmtEvaluator(parameter1))
-                          .and(new LoanAmtEvaluator(parameter2))
-                          .and(new LoanTypeEvaluator(parameter3))
-                          .build()
-                , new ThroughPassProcessor()
-                ,1);
+//        DefaultRule rule = new DefaultRule("0",
+//                EvaluatorBuilderFactory.get().<LoanFact>stream(new LoanAmtEvaluator(parameter1))
+//                          .and(new LoanAmtEvaluator(parameter2))
+//                          .and(new LoanTypeEvaluator(parameter3))
+//                          .build()
+//                , new ThroughPassProcessor()
+//                ,1);
 
         //
 //        rule.fire(fact);
