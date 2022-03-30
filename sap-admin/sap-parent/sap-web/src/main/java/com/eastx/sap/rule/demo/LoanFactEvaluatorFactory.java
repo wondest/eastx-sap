@@ -4,8 +4,6 @@ import com.eastx.sap.rule.core.evaluator.AbstractSimpleEvaluator;
 import com.eastx.sap.rule.core.evaluator.Evaluator;
 import com.eastx.sap.rule.core.parameter.Parameter;
 
-import java.util.function.Function;
-
 /**
  * @ClassName LoanFactProcessors
  * @Description: TODO
@@ -15,8 +13,12 @@ import java.util.function.Function;
  * @Since 1.8
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
-public class LoanFactEvaluators {
-
+public class LoanFactEvaluatorFactory {
+    /**
+     *
+     * @param parameter
+     * @return
+     */
     public static Evaluator getLoanAmt(Parameter<Integer>  parameter) {
         class LoanAmtEvaluator extends AbstractSimpleEvaluator<LoanFact, Integer> {
 
@@ -27,6 +29,11 @@ public class LoanFactEvaluators {
         return new LoanAmtEvaluator(parameter);
     }
 
+    /**
+     *
+     * @param parameter
+     * @return
+     */
     public static Evaluator getLoanType(Parameter<String> parameter) {
         class LoanTypeEvaluator extends AbstractSimpleEvaluator<LoanFact, String> {
 
@@ -36,6 +43,4 @@ public class LoanFactEvaluators {
         }
         return new LoanTypeEvaluator(parameter);
     }
-
-
 }

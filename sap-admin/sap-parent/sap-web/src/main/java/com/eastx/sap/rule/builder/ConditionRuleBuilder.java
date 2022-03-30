@@ -21,6 +21,13 @@ public interface ConditionRuleBuilder {
     ConditionRuleBuilder or(Evaluator operator);
 
     /**
+     * Set the or condition of a rule
+     * @param operator
+     * @return
+     */
+    ConditionRuleBuilder and(Evaluator operator);
+
+    /**
      * Next set the action of rule
      * @param processor
      * @return

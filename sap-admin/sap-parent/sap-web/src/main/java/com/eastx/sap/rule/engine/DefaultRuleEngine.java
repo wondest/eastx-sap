@@ -5,14 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.function.Consumer;
 
 /**
- * @param <F>
+ * 规则引擎 - default
  */
 @Slf4j
-public class DefaultRuleEngine<F> implements RuleEngine<F> {
+public class DefaultRuleEngine implements RuleEngine {
     /**
      * 规则执行器
      */
-    private final RuleExecutor<F> executor;
+    private final RuleExecutor executor;
 
     /**
      * 规则集
@@ -23,12 +23,12 @@ public class DefaultRuleEngine<F> implements RuleEngine<F> {
      *
      * @param executor
      */
-    public DefaultRuleEngine(RuleExecutor<F> executor) {
+    public DefaultRuleEngine(RuleExecutor executor) {
         this.executor = executor;
     }
 
     @Override
-    public void execute(Context<F> context) {
+    public void execute(Context context) {
         if (rules.isEmpty()) {
             return;
         }

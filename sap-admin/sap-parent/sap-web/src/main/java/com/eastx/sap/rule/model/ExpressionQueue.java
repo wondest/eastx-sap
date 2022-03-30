@@ -1,4 +1,4 @@
-package com.eastx.sap.rule.builder;
+package com.eastx.sap.rule.model;
 
 import java.util.Collection;
 

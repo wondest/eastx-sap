@@ -1,6 +1,6 @@
 package com.eastx.sap.rule.builder;
 
-import com.eastx.sap.rule.model.SetEnum;
+import com.eastx.sap.rule.model.SetOperandEnum;
 import com.eastx.sap.rule.core.parameter.Parameter;
 import com.eastx.sap.rule.core.parameter.SetParameter;
 import org.springframework.util.Assert;
@@ -22,7 +22,7 @@ public class SetParameterBuilder {
     /**
      *
      */
-    SetEnum operation;
+    SetOperandEnum operation;
 
     /**
      *
@@ -43,7 +43,7 @@ public class SetParameterBuilder {
      * @return
      */
     public SetParameterBuilder exclude() {
-        this.operation = SetEnum.EXCLUDE;
+        this.operation = SetOperandEnum.EXCLUDE;
         return this;
     }
 
@@ -76,7 +76,7 @@ public class SetParameterBuilder {
         Assert.notNull(elements, "elements should not be null");
 
         if(null == operation) {
-            this.operation = SetEnum.INCLUDE;
+            this.operation = SetOperandEnum.INCLUDE;
         }
 
         return new SetParameter(name, operation, elements.stream().collect(Collectors.toSet()));

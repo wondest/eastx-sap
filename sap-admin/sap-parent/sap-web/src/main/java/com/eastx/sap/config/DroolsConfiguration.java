@@ -1,7 +1,5 @@
 package com.eastx.sap.config;
 
-import com.eastx.sap.rule.demo.DroolsMessage;
-import com.eastx.sap.rule.demo.PackNameFilter;
 import com.eastx.sap.rule.builder.ParameterBuilderFactory;
 import com.eastx.sap.rule.engine.BeanRule;
 import com.eastx.sap.rule.demo.LoanFact;
@@ -216,18 +214,18 @@ public class DroolsConfiguration {
         fact.setLoanAmt(99);
 
         //build parameters
-        Parameter parameter3 = ParameterBuilderFactory.get()
+        Parameter parameter3 = ParameterBuilderFactory.getObject()
                 .set("loanType")
                 .add("test")
                 .add("test2")
                 .build();
 
-        Parameter parameter1 = ParameterBuilderFactory.get()
+        Parameter parameter1 = ParameterBuilderFactory.getObject()
                 .range("loanAmt")
                 .between(Integer.valueOf(50), Integer.valueOf(100))
                 .build();
 
-        Parameter parameter2 = ParameterBuilderFactory.get()
+        Parameter parameter2 = ParameterBuilderFactory.getObject()
                 .range("loanAmt")
                 .between(Integer.valueOf(10), Integer.valueOf(60))
                 .build();

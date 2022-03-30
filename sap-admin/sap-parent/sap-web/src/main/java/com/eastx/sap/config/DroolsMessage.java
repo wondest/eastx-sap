@@ -1,4 +1,4 @@
-package com.eastx.sap.rule.demo;
+package com.eastx.sap.config;
 
 import org.kie.api.definition.type.Label;
 

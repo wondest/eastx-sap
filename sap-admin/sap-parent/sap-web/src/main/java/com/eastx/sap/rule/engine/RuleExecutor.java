@@ -1,13 +1,13 @@
 package com.eastx.sap.rule.engine;
 
 /**
- * @param <F>
+ * 规则执行器
  */
-public interface RuleExecutor<F> {
+public interface RuleExecutor {
     /**
      * 执行规则
      *
      * @return
      */
-    boolean execute(Context<F> context, Rule rule);
+    boolean execute(Context context, Rule rule);
 }

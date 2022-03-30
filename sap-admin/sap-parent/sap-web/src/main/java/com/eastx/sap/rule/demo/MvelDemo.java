@@ -2,8 +2,12 @@ package com.eastx.sap.rule.demo;
 
 import com.eastx.sap.rule.adapter.MvelExpressionSymbolAdapter;
 import com.eastx.sap.rule.builder.ParameterBuilderFactory;
+import com.eastx.sap.rule.builder.RuleBuilderFactory;
 import com.eastx.sap.rule.core.evaluator.Evaluator;
 import com.eastx.sap.rule.core.parameter.Parameter;
+import com.eastx.sap.rule.core.processor.ThroughPassProcessor;
+import com.eastx.sap.rule.engine.*;
+import com.eastx.sap.rule.factory.RuleEngineFactory;
 import org.mvel2.MVEL;
 
 import java.util.HashMap;
@@ -21,6 +25,54 @@ import java.util.Map;
 public class MvelDemo {
 
     public static void main(String[] argv) {
+
+        testSimple();
+    }
+
+    public static void testEngine() {
+        //build fact - 来自业务数据
+        LoanFact fact = new LoanFact();
+
+        fact.setLoanType("test");
+        fact.setLoanAmt(61);
+
+        //build parameter - 数据库
+        Parameter parameter1 = ParameterBuilderFactory.getObject()
+                .range("loanAmt")
+                .between(Integer.valueOf(10), Integer.valueOf(60))
+                .build();
+
+        Parameter parameter2 = ParameterBuilderFactory.getObject()
+                .set("loanType")
+                .add("test1")
+                .add("test2")
+                .build();
+
+
+        Rule rule = new RuleBuilderFactory().rule("11")
+                .priority(10)
+                .condition(LoanFactEvaluatorFactory.getLoanAmt(parameter1).not())
+                .or(LoanFactEvaluatorFactory.getLoanType(parameter2))
+                .action().processor(new ThroughPassProcessor())
+                .mvel()
+                .build();
+
+        RuleSet ruleSet = new DefaultRuleSet();
+
+        ruleSet.add(rule);
+
+        RuleEngine ruleEngine = new RuleEngineFactory().mvel();
+
+        ruleEngine.assemble(ruleSet);
+
+        Context context = new DefaultContext(fact);
+
+        ruleEngine.execute(context);
+
+        System.out.println(context);
+    }
+
+    public static void testSimple() {
         //1 fact,
         LoanFact fact = new LoanFact();
 
@@ -38,12 +90,12 @@ public class MvelDemo {
 //        parameter.put("fact", fact);
 
         //3.
-        Parameter parameter1 = ParameterBuilderFactory.get()
+        Parameter parameter1 = ParameterBuilderFactory.getObject()
                 .range("loanAmt")
                 .between(Integer.valueOf(10), Integer.valueOf(60))
                 .build();
 
-        Parameter parameter2 = ParameterBuilderFactory.get()
+        Parameter parameter2 = ParameterBuilderFactory.getObject()
                 .set("loanType")
                 .add("test")
                 .add("test2")
@@ -58,7 +110,7 @@ public class MvelDemo {
 //                .java()
 //                .build();
 
-        Evaluator evaluator2 = LoanFactEvaluators.getLoanType(parameter2);
+        Evaluator evaluator2 = LoanFactEvaluatorFactory.getLoanType(parameter2);
 
         System.out.println(evaluator2.getExpression(new MvelExpressionSymbolAdapter()));
 

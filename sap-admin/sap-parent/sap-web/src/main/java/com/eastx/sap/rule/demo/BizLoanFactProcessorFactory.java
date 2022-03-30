@@ -9,6 +9,6 @@ package com.eastx.sap.rule.demo;
  * @Since 1.8
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
-public class LoanFactProcessors {
+public class BizLoanFactProcessorFactory {
 
 }

@@ -19,8 +19,7 @@ public class RuleBuilder extends AbstractRuleBuilder implements BaseRuleBuilder 
 
     @Override
     public ConditionRuleBuilder condition(Evaluator operator) {
-        concat(operator);
-        return this;
+        return concatReversed(operator);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.eastx.sap.rule.builder;
 
-import com.eastx.sap.rule.model.RangeEnum;
+import com.eastx.sap.rule.model.RangeOperandEnum;
 import com.eastx.sap.rule.core.parameter.Parameter;
 import com.eastx.sap.rule.core.parameter.RangeParameter;
 import org.springframework.util.Assert;
@@ -18,7 +18,7 @@ public class RangeParameterBuilder<T extends Comparable> {
     /**
      * 区间类型
      */
-    private RangeEnum operation;
+    private RangeOperandEnum operation;
 
     /**
      * 下限（如果是eq,那么 lower==upper)
@@ -45,7 +45,7 @@ public class RangeParameterBuilder<T extends Comparable> {
     }
 
     public RangeParameterBuilder<T> between(T lower, T upper) {
-        binary(RangeEnum.BW, lower, upper);
+        binary(RangeOperandEnum.BW, lower, upper);
         return this;
     }
 
@@ -55,7 +55,7 @@ public class RangeParameterBuilder<T extends Comparable> {
      * @return
      */
     public RangeParameterBuilder<T> equal(T value) {
-        return unary(RangeEnum.EQ, value);
+        return unary(RangeOperandEnum.EQ, value);
     }
 
     /**
@@ -64,7 +64,7 @@ public class RangeParameterBuilder<T extends Comparable> {
      * @return
      */
     public RangeParameterBuilder<T> lessThan(T value) {
-        return unary(RangeEnum.LT, value);
+        return unary(RangeOperandEnum.LT, value);
     }
 
     /**
@@ -73,7 +73,7 @@ public class RangeParameterBuilder<T extends Comparable> {
      * @return
      */
     public RangeParameterBuilder<T> lessEqual(T value) {
-        return unary(RangeEnum.LE, value);
+        return unary(RangeOperandEnum.LE, value);
     }
 
     /**
@@ -82,7 +82,7 @@ public class RangeParameterBuilder<T extends Comparable> {
      * @return
      */
     public RangeParameterBuilder<T> greaterThan(T value) {
-        return unary(RangeEnum.GT, value);
+        return unary(RangeOperandEnum.GT, value);
     }
 
     /**
@@ -91,7 +91,7 @@ public class RangeParameterBuilder<T extends Comparable> {
      * @return
      */
     public RangeParameterBuilder<T> greaterEqual(T value) {
-        return unary(RangeEnum.GE, value);
+        return unary(RangeOperandEnum.GE, value);
     }
 
     /**
@@ -100,7 +100,7 @@ public class RangeParameterBuilder<T extends Comparable> {
      * @param value
      * @return
      */
-    private RangeParameterBuilder<T> unary(RangeEnum operation, T value) {
+    private RangeParameterBuilder<T> unary(RangeOperandEnum operation, T value) {
         this.operation = operation;
         this.lower = null;
         this.upper = null;
@@ -115,7 +115,7 @@ public class RangeParameterBuilder<T extends Comparable> {
      * @param upper
      * @return
      */
-    private RangeParameterBuilder<T> binary(RangeEnum operation, T lower, T upper) {
+    private RangeParameterBuilder<T> binary(RangeOperandEnum operation, T lower, T upper) {
         this.operation = operation;
         this.lower = lower;
         this.upper = upper;

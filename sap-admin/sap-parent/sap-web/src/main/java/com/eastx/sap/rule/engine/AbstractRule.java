@@ -75,7 +75,7 @@ public abstract class AbstractRule implements BaseRule {
 
     @Override
     public String toString() {
-        return "SimpleRule{" +
+        return "AbstractRule {" +
                 "id='" + id + '\'' +
                 ", priority=" + priority +
                 ", exclusive=" + exclusive +

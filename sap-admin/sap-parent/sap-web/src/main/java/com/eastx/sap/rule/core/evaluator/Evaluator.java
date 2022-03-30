@@ -20,4 +20,15 @@ public interface Evaluator {
      * @return
      */
     String getExpression(ExpressionSymbolAdapter adapter);
+
+    /**
+     *
+     * @return
+     */
+    Evaluator not();
+
+    /**
+     *
+     */
+    boolean isReversed();
 }

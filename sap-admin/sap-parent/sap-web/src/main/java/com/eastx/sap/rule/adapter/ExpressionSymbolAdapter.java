@@ -62,4 +62,16 @@ public interface ExpressionSymbolAdapter {
      * 空格
      */
     String space();
+
+    /**
+     *
+     * @return
+     */
+    String leftBracket();
+
+    /**
+     *
+     * @return
+     */
+    String rightBracket();
 }

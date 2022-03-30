@@ -7,15 +7,14 @@ import java.util.stream.IntStream;
 
 /**
  * 非功能
- *
- * @param <F>
+
  */
 @Slf4j
-public class PerfRuleEngine<F> implements RuleEngine<F> {
+public class PerfRuleEngine implements RuleEngine {
     /**
      * 规则执行器
      */
-    private final RuleExecutor<F> executor;
+    private final RuleExecutor executor;
 
     /**
      * 规则集
@@ -31,7 +30,7 @@ public class PerfRuleEngine<F> implements RuleEngine<F> {
      *
      * @param executor
      */
-    public PerfRuleEngine(RuleExecutor<F> executor) {
+    public PerfRuleEngine(RuleExecutor executor) {
         this(executor, 10000);
     }
 
@@ -39,13 +38,13 @@ public class PerfRuleEngine<F> implements RuleEngine<F> {
      *
      * @param executor
      */
-    public PerfRuleEngine(RuleExecutor<F> executor, int runLimiter) {
+    public PerfRuleEngine(RuleExecutor executor, int runLimiter) {
         this.executor = executor;
         this.runLimiter = runLimiter;
     }
 
     @Override
-    public void execute(Context<F> context) {
+    public void execute(Context context) {
         IntStream.range(0, runLimiter).forEach(i->doExecute(context));
     }
 
@@ -53,7 +52,7 @@ public class PerfRuleEngine<F> implements RuleEngine<F> {
      *
      * @param context
      */
-    private void doExecute(Context<F> context) {
+    private void doExecute(Context context) {
         if (rules.isEmpty()) {
             return;
         }

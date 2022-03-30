@@ -44,4 +44,14 @@ public abstract class AbstractExpressionSymbolAdapter implements ExpressionSymbo
     public String space() {
         return " ";
     }
+
+    @Override
+    public String leftBracket() {
+        return "(";
+    }
+
+    @Override
+    public String rightBracket() {
+        return ")";
+    }
 }

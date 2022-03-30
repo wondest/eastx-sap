@@ -10,9 +10,8 @@ import java.util.function.Supplier;
 /**
  * 默认的规则执行器
  *
- * @param <F>
  */
-public class DefaultRuleExecutor<F> extends AbstractRuleExecutor<F> {
+public class DefaultRuleExecutor extends AbstractRuleExecutor {
     /**
      *
      */
@@ -24,12 +23,12 @@ public class DefaultRuleExecutor<F> extends AbstractRuleExecutor<F> {
     }
 
     @Override
-    protected boolean evalCondition(Context<F> context, Supplier condition) {
+    protected boolean evalCondition(Context context, Supplier condition) {
         return parser.parseExpression(condition.get()).getValue(context.getFact());
     }
 
     @Override
-    protected void processAction(Context<F> context, Consumer action) {
+    protected void processAction(Context context, Consumer action) {
         action.accept(context.getFact());
     }
 }

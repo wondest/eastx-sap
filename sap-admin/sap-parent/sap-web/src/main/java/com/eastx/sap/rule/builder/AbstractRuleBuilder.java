@@ -13,17 +13,24 @@ import com.eastx.sap.rule.model.OperandEnum;
  * @Since 1.8
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
-public abstract class AbstractRuleBuilder extends RuleBuilderHelper
+public abstract class AbstractRuleBuilder extends RuleBuilderHelper<AbstractRuleBuilder>
         implements ConditionRuleBuilder, ActionRuleBuilder {
 
     @Override
     public ActionRuleBuilder processor(Processor processor) {
+        setProcessor(processor);
         return this;
     }
 
     @Override
     public ConditionRuleBuilder or(Evaluator operator) {
-        concat(OperandEnum.OR).concat(operator);
+        concat(OperandEnum.OR).concatReversed(operator);
+        return this;
+    }
+
+    @Override
+    public ConditionRuleBuilder and(Evaluator operator) {
+        concat(OperandEnum.AND).concatReversed(operator);
         return this;
     }
 
@@ -35,6 +42,20 @@ public abstract class AbstractRuleBuilder extends RuleBuilderHelper
 
     @Override
     public ActionRuleBuilder action() {
+        concat(OperandEnum.END);
+        return this;
+    }
+
+    /**
+     *
+     * @param evaluator
+     * @return
+     */
+    protected AbstractRuleBuilder concatReversed(Evaluator evaluator) {
+        if(evaluator.isReversed()) {
+            concat(OperandEnum.NOT);
+        }
+        concat(evaluator);
         return this;
     }
 
@@ -44,5 +65,21 @@ public abstract class AbstractRuleBuilder extends RuleBuilderHelper
      */
     public JavaRuleBuilder java() {
         return new JavaRuleBuilder(this);
+    }
+
+    /**
+     * A spel rule builder
+     * @return
+     */
+    public SpelRuleBuilder spel() {
+        return new SpelRuleBuilder(this);
+    }
+
+    /**
+     * A mvel rule builder
+     * @return
+     */
+    public MvelRuleBuilder mvel() {
+        return new MvelRuleBuilder(this);
     }
 }

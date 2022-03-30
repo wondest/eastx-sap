@@ -1,14 +1,13 @@
 package com.eastx.sap.rule.core.parameter;
 
 import com.eastx.sap.rule.adapter.ExpressionSymbolAdapter;
-import com.eastx.sap.rule.model.SetEnum;
+import com.eastx.sap.rule.model.SetOperandEnum;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
 /**
- * @ClassName ParameterPO
+ * @ClassName SetParameter
  * @Description: TODO
  * @Author Tender
  * @Time 2022/3/13 8:28
@@ -25,7 +24,7 @@ public class SetParameter implements Parameter {
     /**
      *
      */
-    private SetEnum operation;
+    private SetOperandEnum operation;
 
     /**
      *
@@ -36,10 +35,9 @@ public class SetParameter implements Parameter {
      * Just for jackson
      */
     public SetParameter() {
-
     }
 
-    public SetParameter(String name, SetEnum operation, Set<Object> set) {
+    public SetParameter(String name, SetOperandEnum operation, Set<Object> set) {
         this.name = name;
         this.set = set;
         this.operation = operation;
@@ -61,19 +59,19 @@ public class SetParameter implements Parameter {
         this.set = set;
     }
 
-    public SetEnum getOperation() {
+    public SetOperandEnum getOperation() {
         return operation;
     }
 
-    public void setOperation(SetEnum operation) {
+    public void setOperation(SetOperandEnum operation) {
         this.operation = operation;
     }
 
     @Override
     public boolean check(Object value) {
-        if(SetEnum.INCLUDE.equals(operation)) {
+        if(SetOperandEnum.INCLUDE.equals(operation)) {
             return set.contains(value);
-        } else if(SetEnum.EXCLUDE.equals(operation)) {
+        } else if(SetOperandEnum.EXCLUDE.equals(operation)) {
             return set.isEmpty() || !set.contains(value);
         }  else {
             return false;
@@ -154,11 +152,11 @@ public class SetParameter implements Parameter {
      * @param <S>
      * @return
      */
-    private <R, S> R switchAction(SetEnum type, S value, Function<S, R> includeAction
+    private <R, S> R switchAction(SetOperandEnum type, S value, Function<S, R> includeAction
             , Function<S, R> excludeAction) {
-        if(SetEnum.INCLUDE.equals(type)) {
+        if(SetOperandEnum.INCLUDE.equals(type)) {
             return includeAction.apply(value);
-        } else if(SetEnum.EXCLUDE.equals(type)) {
+        } else if(SetOperandEnum.EXCLUDE.equals(type)) {
             return excludeAction.apply(value);
         } else {
             throw new UnsupportedOperationException(type.name());

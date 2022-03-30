@@ -1,4 +1,4 @@
-package com.eastx.sap.rule.demo;
+package com.eastx.sap.config;
 
 import org.kie.api.runtime.rule.AgendaFilter;
 import org.kie.api.runtime.rule.Match;
@@ -12,12 +12,12 @@ import org.kie.api.runtime.rule.Match;
  * @Since 1.8
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
-public class PackNameFilter implements AgendaFilter {
+public class RuleNameFilter implements AgendaFilter {
 
-    String name;
+    String ruleName;
 
-    public PackNameFilter(String name) {
-        this.name = name;
+    RuleNameFilter(String ruleName) {
+        this.ruleName = ruleName;
     }
 
     @Override
@@ -25,6 +25,6 @@ public class PackNameFilter implements AgendaFilter {
         //System.out.println(match.getRule().getName());
         //System.out.println(match.getRule().getPackageName());
         //System.out.println(match.getRule().getNamespace());
-        return match.getRule().getPackageName().equals(name);
+        return match.getRule().getName().equals(ruleName);
     }
 }

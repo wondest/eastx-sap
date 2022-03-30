@@ -4,6 +4,7 @@ package com.eastx.sap.rule.model;
  *
  */
 public enum OperandEnum {
+    NOT(4),
     AND(3),
     OR(2),
     NAN(1),

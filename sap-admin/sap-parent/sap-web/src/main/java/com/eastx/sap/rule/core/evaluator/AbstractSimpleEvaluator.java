@@ -12,7 +12,7 @@ import java.util.function.Function;
  * @param <F> the fact type
  * @param <V> the fact value
  */
-public abstract class AbstractSimpleEvaluator<F, V> implements Evaluator {
+public abstract class AbstractSimpleEvaluator<F, V> extends AbstractEvaluator  {
     /**
      * 预设参数
      */
@@ -51,6 +51,8 @@ public abstract class AbstractSimpleEvaluator<F, V> implements Evaluator {
      */
     @Override
     public String getExpression(ExpressionSymbolAdapter adapter) {
-        return parameter.getExpression(fact, adapter);
+        return new StringBuilder().append(adapter.leftBracket())
+                .append(parameter.getExpression(fact, adapter))
+                .append(adapter.rightBracket()).toString();
     }
 }

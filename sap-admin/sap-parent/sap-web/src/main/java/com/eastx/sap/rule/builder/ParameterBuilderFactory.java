@@ -15,7 +15,7 @@ public class ParameterBuilderFactory {
      *
      * @return
      */
-    public static ParameterBuilderFactory get() {
+    public static ParameterBuilderFactory getObject() {
         return new ParameterBuilderFactory();
     }
 

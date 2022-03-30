@@ -1,6 +1,8 @@
 package com.eastx.sap.rule.builder;
 
 import com.eastx.sap.rule.core.processor.Processor;
+import com.eastx.sap.rule.model.ArrayExpressionDeque;
+import com.eastx.sap.rule.model.ExpressionQueue;
 
 /**
  * @ClassName RuleBuilderHelper
@@ -11,7 +13,7 @@ import com.eastx.sap.rule.core.processor.Processor;
  * @Since 1.8
  * @Copyright ©2021-2021 Tender Xie, All Rights Reserved.
  **/
-public abstract class RuleBuilderHelper {
+public abstract class RuleBuilderHelper<B extends RuleBuilderHelper> {
     /**
      * The rule id
      */
@@ -38,9 +40,9 @@ public abstract class RuleBuilderHelper {
      * @param condition Operand:OperandEnum or Operator:AbstractCompositeEvaluator
      * @return
      */
-    RuleBuilderHelper concat(Object condition) {
+    B concat(Object condition) {
         expressionQueue.offer(condition);
-        return this;
+        return (B)this;
     }
 
     public String getId() {

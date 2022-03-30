@@ -1,4 +1,4 @@
-package com.eastx.sap.rule.builder;
+package com.eastx.sap.rule.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +33,7 @@ public class ArrayExpressionDeque implements ExpressionQueue {
      */
     transient int tail;
 
-    ArrayExpressionDeque() {
+    public ArrayExpressionDeque() {
         this.head = 0;
         this.tail = 0;
     }

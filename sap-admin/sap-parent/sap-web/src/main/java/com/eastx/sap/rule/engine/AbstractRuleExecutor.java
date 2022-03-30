@@ -5,12 +5,10 @@ import java.util.function.Supplier;
 
 /**
  * 规则执行器
- *
- * @param <F>
  */
-abstract class AbstractRuleExecutor<F> implements RuleExecutor<F> {
+abstract class AbstractRuleExecutor implements RuleExecutor {
     @Override
-    public boolean execute(Context<F> context, Rule rule) {
+    public boolean execute(Context context, Rule rule) {
         if (evalCondition(context, rule.getCondition())) {
             processAction(context, rule.getAction());
             return true;
@@ -26,7 +24,7 @@ abstract class AbstractRuleExecutor<F> implements RuleExecutor<F> {
      * @param condition
      * @return
      */
-    protected abstract boolean evalCondition(Context<F> context, Supplier condition);
+    protected abstract boolean evalCondition(Context context, Supplier condition);
 
     /**
      * 规则动作
@@ -34,5 +32,5 @@ abstract class AbstractRuleExecutor<F> implements RuleExecutor<F> {
      * @param context
      * @param action
      */
-    protected abstract void processAction(Context<F> context, Consumer action);
+    protected abstract void processAction(Context context, Consumer action);
 }

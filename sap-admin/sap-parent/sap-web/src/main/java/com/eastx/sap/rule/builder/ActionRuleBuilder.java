@@ -24,4 +24,16 @@ public interface ActionRuleBuilder {
      * @return
      */
     JavaRuleBuilder java();
+
+    /**
+     * Next set the real builder
+     * @return
+     */
+    SpelRuleBuilder spel();
+
+    /**
+     *
+     * @return
+     */
+    MvelRuleBuilder mvel();
 }

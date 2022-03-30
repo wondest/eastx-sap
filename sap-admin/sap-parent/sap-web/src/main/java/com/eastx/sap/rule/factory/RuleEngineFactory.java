@@ -18,20 +18,34 @@ import com.eastx.sap.rule.engine.RuleEngine;
 public class RuleEngineFactory {
     /**
      *
-     * @param <F>
      * @return
      */
-    public<F> RuleEngine<F> getDefaultEngine() {
-        return new DefaultRuleEngine<>(new DefaultRuleExecutor<>(ExpressionParsers.java()));
+    public RuleEngine java() {
+        return new DefaultRuleEngine(new DefaultRuleExecutor(ExpressionParsers.java()));
+    }
+
+    /**
+     *
+     * @return
+     */
+    public RuleEngine spel() {
+        return new DefaultRuleEngine(new DefaultRuleExecutor(ExpressionParsers.spel()));
+    }
+
+    /**
+     *
+     * @return
+     */
+    public RuleEngine mvel() {
+        return new DefaultRuleEngine(new DefaultRuleExecutor(ExpressionParsers.mvel()));
     }
 
     /**
      *
      * @param maxRuns
-     * @param <F>
      * @return
      */
-    public<F> RuleEngine<F> getPerfEngine(int maxRuns) {
-        return new PerfRuleEngine<>(new DefaultRuleExecutor<>(ExpressionParsers.java()), maxRuns);
+    public RuleEngine javaPerf(int maxRuns) {
+        return new PerfRuleEngine(new DefaultRuleExecutor(ExpressionParsers.java()), maxRuns);
     }
 }

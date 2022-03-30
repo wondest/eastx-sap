@@ -1,6 +1,6 @@
 package com.ccb.abccf.cond;
 
-import com.eastx.sap.rule.demo.DroolsMessage;
+import com.eastx.sap.config.DroolsMessage;
 
 rule "TestCond1"
   agenda-group "cond"

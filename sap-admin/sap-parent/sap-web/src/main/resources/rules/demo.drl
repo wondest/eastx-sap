@@ -1,6 +1,6 @@
 package com.ccb.abccf.demo;
 
-import com.eastx.sap.rule.demo.DroolsMessage;
+import com.eastx.sap.config.DroolsMessage;
 
 
 rule "HelloWorld"

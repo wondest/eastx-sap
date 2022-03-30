@@ -3,7 +3,7 @@ package com.eastx.sap.rule.model;
 /**
  *
  */
-public enum SetEnum {
+public enum SetOperandEnum {
     INCLUDE,
     EXCLUDE;
 }

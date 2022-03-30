@@ -1,6 +1,7 @@
 package com.eastx.sap.rule.core.evaluator;
 
 import com.eastx.sap.rule.adapter.ExpressionSymbolAdapter;
+import org.springframework.util.Assert;
 
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -12,7 +13,7 @@ import java.util.function.Supplier;
  *    (1) 链表方式构建，实现Evaluator接口
  *    (2) 实现：combine(self,next)
  */
-public abstract class AbstractCompositeEvaluator implements Evaluator {
+public abstract class AbstractCompositeEvaluator extends AbstractEvaluator {
     /**
      * 责任链中下一个处理单元
      */
@@ -88,25 +89,16 @@ public abstract class AbstractCompositeEvaluator implements Evaluator {
         this.tail = evaluator.tail;
     }
 
-
     /**
-     * 获取求值表达式
      *
-     * @param adapter  -- 语言适配
-     * @return
+     * @param adapter
+     * @return null or expression
      */
-    @Override
-    public String getExpression(ExpressionSymbolAdapter adapter) {
-        StringBuilder expression = Optional.ofNullable(getSelfExpression(adapter))
-                .map(s->new StringBuilder(s))
-                .orElse(new StringBuilder());
-
+    protected String getNextExpression(ExpressionSymbolAdapter adapter) {
         return Optional.ofNullable(next)
-                .map(n->expression.append(n.getExpression(adapter)))
-                .orElse(expression).toString();
+                .map(n->n.getExpression(adapter))
+                .orElse(null);
     }
-
-    abstract String getSelfExpression(ExpressionSymbolAdapter adapter);
 
     /**
      * The head
@@ -114,7 +106,7 @@ public abstract class AbstractCompositeEvaluator implements Evaluator {
      *   计算的时候，穿透直接使用next的真值
      *   如果next为空，则给默认的true(参考drools,没写条件默认位asset(true))
      */
-    static class Head extends AbstractCompositeEvaluator {
+    private static class Head extends AbstractCompositeEvaluator {
         @Override
         protected boolean combine(boolean selfResult, Supplier<Boolean> nextResult) {
             return Optional.ofNullable(nextResult.get()).orElse(true);
@@ -125,9 +117,15 @@ public abstract class AbstractCompositeEvaluator implements Evaluator {
             return true;
         }
 
+        /**
+         * 获取求值表达式
+         *
+         * @param adapter  -- 语言适配
+         * @return null or expression
+         */
         @Override
-        String getSelfExpression(ExpressionSymbolAdapter adapter) {
-            return null;
+        public String getExpression(ExpressionSymbolAdapter adapter) {
+            return getNextExpression(adapter);
         }
     }
 
@@ -136,6 +134,8 @@ public abstract class AbstractCompositeEvaluator implements Evaluator {
      *
      *    (1) combine the self and next using the combiner
      *    (2) 如果next为空，直接使用self真值
+     *
+     *    定义求值模板
      */
     private static abstract class Body extends AbstractCompositeEvaluator {
         /**
@@ -148,8 +148,9 @@ public abstract class AbstractCompositeEvaluator implements Evaluator {
          */
         private BiFunction<Boolean, Supplier<Boolean>, Boolean> combiner;
 
-        public Body(Evaluator delegate, BiFunction<Boolean, Supplier<Boolean>, Boolean> combiner) {
-            this.delegate = delegate;
+        public Body(Evaluator evaluator, BiFunction<Boolean, Supplier<Boolean>, Boolean> combiner) {
+            Assert.notNull(evaluator, "The evaluator should not be null");
+            this.delegate = evaluator;
             this.combiner = combiner;
         }
 
@@ -163,31 +164,119 @@ public abstract class AbstractCompositeEvaluator implements Evaluator {
             return delegate.execute(fact);
         }
 
+        /**
+         *
+         * @return
+         */
         protected Evaluator getDelegate() {
             return delegate;
         }
 
-        @Override
+        /**
+         *
+         * @param adapter
+         * @return
+         */
         protected String getSelfExpression(ExpressionSymbolAdapter adapter) {
             return getDelegate().getExpression(adapter);
         }
     }
 
     /**
+     * 一元运算：
+     *    定义表达式模板 [Operand]Operator
+     */
+    private static abstract class BodyUnary extends Body {
+        public BodyUnary(Evaluator evaluator, BiFunction<Boolean, Supplier<Boolean>, Boolean> combiner) {
+            super(evaluator, combiner);
+        }
+
+        @Override
+        public String getExpression(ExpressionSymbolAdapter adapter) {
+            StringBuilder expression = new StringBuilder();
+
+            return Optional.ofNullable(getOperandExpression(adapter))
+                    .map(e->expression.append(e)
+                            .append(getSelfExpression(adapter)).toString())
+                    .orElse(getSelfExpression(adapter));
+        }
+
+        /**
+         * Operand Expression String
+         * @param adapter
+         * @return Operand String or null
+         */
+        abstract String getOperandExpression(ExpressionSymbolAdapter adapter);
+    }
+
+    /**
+     * 二元运算：
+     *    定义表达式模板 Self [Operand Next]
+     */
+    private static abstract class BodyBinary extends Body {
+        public BodyBinary(Evaluator evaluator, BiFunction<Boolean, Supplier<Boolean>, Boolean> combiner) {
+            super(evaluator, combiner);
+        }
+
+        @Override
+        public String getExpression(ExpressionSymbolAdapter adapter) {
+            StringBuilder expression = new StringBuilder();
+
+            return Optional.ofNullable(getNextExpression(adapter))
+                    .map(nextExpression->expression
+                            .append(adapter.leftBracket())
+                            .append(getSelfExpression(adapter))
+                            .append(adapter.space())
+                            .append(getOperandExpression(adapter))
+                            .append(adapter.space())
+                            .append(nextExpression)
+                            .append(adapter.rightBracket())
+                            .toString())
+                    .orElse(getSelfExpression(adapter));
+        }
+
+        /**
+         * Operand Expression String
+         * @param adapter
+         * @return Operand String or null
+         */
+        protected abstract String getOperandExpression(ExpressionSymbolAdapter adapter);
+    }
+
+    /**
      * self,next -> self
      */
-    public static class BodySelf extends Body {
+    public static class BodySelf extends BodyUnary {
         public BodySelf(Evaluator delegate) {
-            super(delegate, (self, next)-> self);
+            super(delegate, (self, next)->self);
+        }
+
+        @Override
+        String getOperandExpression(ExpressionSymbolAdapter adapter) {
+            return null;
         }
     }
 
     /**
      * self,next -> self
      */
-    public static class BodyAnd extends Body {
+    public static class BodyNot extends BodyUnary {
+        public BodyNot(Evaluator delegate) {
+            super(delegate, (self, next)->!self);
+        }
+
+        @Override
+        String getOperandExpression(ExpressionSymbolAdapter adapter) {
+            return adapter.not();
+        }
+    }
+
+    /**
+     * self,next -> self
+     */
+    public static class BodyAnd extends BodyBinary {
         public BodyAnd(Evaluator delegate) {
-            super(delegate, (self, next)-> {
+            super(delegate, (self, next)->{
                 if(!self) {
                     //短路操作
                     return false;
@@ -198,18 +287,17 @@ public abstract class AbstractCompositeEvaluator implements Evaluator {
         }
 
         @Override
-        protected String getSelfExpression(ExpressionSymbolAdapter adapter) {
-            return new StringBuilder().append(getDelegate().getExpression(adapter))
-                    .append("AND").toString();
+        protected String getOperandExpression(ExpressionSymbolAdapter adapter) {
+            return adapter.and();
         }
     }
 
     /**
      * self OR next ->
      */
-    public static class BodyOr extends Body {
+    public static class BodyOr extends BodyBinary {
         public BodyOr(Evaluator delegate) {
-            super(delegate, (self, next)-> {
+            super(delegate, (self, next)->{
                 if(self) {
                     //短路操作
                     return true;
@@ -220,9 +308,8 @@ public abstract class AbstractCompositeEvaluator implements Evaluator {
         }
 
         @Override
-        protected String getSelfExpression(ExpressionSymbolAdapter adapter) {
-            return new StringBuilder().append(getDelegate().getExpression(adapter))
-                    .append("OR").toString();
+        protected String getOperandExpression(ExpressionSymbolAdapter adapter) {
+            return adapter.or();
         }
     }
 }
